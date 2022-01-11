@@ -1,4 +1,4 @@
-Green-Challenge!!!!
+Green-Challenge!
 =============
 친환경 알고리즘 및 챌린지 프로젝트 입니다.<br>
 
