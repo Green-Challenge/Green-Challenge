@@ -2,7 +2,7 @@ Green-Challenge
 =============
 친환경 알고리즘 및 챌린지 프로젝트 입니다.<br>
 
-## 프로젝트의 전체적인 구조<hr>
+## 프로젝트의 전체적인 구조
 ![Green-Challenge 서버 구조도](대충 이미지 경로)
 - github hook을 받아 Travis CI에서 CI/CD를 진행합니다.
 - 서버는 AWS EC2를 사용하고 있습니다.<br>
@@ -10,7 +10,7 @@ Green-Challenge
 - public IP는 Main Server에만 할당되어 있습니다.
 
 
-## 프로젝트의 주요 관심사<hr>
+## 프로젝트의 주요 관심사
 - 지속적인 성능 개선
 - 나쁜 냄새가 나는 코드에 대한 리팩토링
   <br><br>
@@ -42,23 +42,23 @@ Git Flow를 사용하여 브랜치를 관리합니다.<br>
 
 ### 성능 테스트
 
-## 사용 기술 및 환경<hr>
+## 사용 기술 및 환경
 Spring boot, Maven, JPA, AWS, MariaDB, Travis CI, Java11
 <br>
 
-## Wiki<hr>
+## Wiki
 
-## CI<hr>
+## CI
 Travis CI를 사용합니다.<br>
 PR시마다 자동 Build 및 Test를 적용합니다<br>
 
-## CD<hr>
+## CD
 AWS EC2 서버를 사용하여 자동 배포를 실행합니다.<br>
 
-##Database<hr>
+##Database
 - MariaDB<br><br>
 
-## 화면 설계<hr>
+## 화면 설계
 
 
-## 프로젝트 DB ERD<hr>
+## 프로젝트 DB ERD
