@@ -1,5 +1,7 @@
 package dto;
 
 public class GreenDTO {
-    String test;
+    String test2;
+
+    int a;
 }
