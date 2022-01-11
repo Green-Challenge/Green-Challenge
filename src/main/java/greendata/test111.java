@@ -1,5 +1,5 @@
 package greendata;
 
-public class greenDTO {
+public class test111 {
     private String name;
 }
