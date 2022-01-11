@@ -12,7 +12,7 @@ Green-Challenge
 
 ## 프로젝트의 주요 관심사
 - 지속적인 성능 개선
-- 나쁜 냄새가 나는 코드에 대한 리팩토링
+- 스파게티 코드나 중복된 코드에 대한 리팩토링
   <br><br>
 ### 코드 컨벤션
 - Google code Style을 준수 
@@ -35,18 +35,16 @@ Git Flow를 사용하여 브랜치를 관리합니다.<br>
 - Bitbucket Gitflow Workflow(https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 
 ### 테스트
-- Mockito Framework를 활용하여 고립된 테스트 코드를 작성
-- Jenkins CI를 적용하여 테스트 자동화
+- JUnit를 활용하여 고립된 테스트 코드를 작성
+- Travis CI를 적용하여 테스트 자동화
 - 협업하는 동료의 소스코드에 서로 테스트코드를 작성하여 서로의 소스코드를 알 수 있도록 하고 있습니다.
   <br><br>
 
 ### 성능 테스트
 
 ## 사용 기술 및 환경
-Spring boot, Maven, JPA, AWS, MariaDB, Travis CI, Java11
+Spring boot, Maven, JPA, AWS, MariaDB, Travis CI, Java11, Nginx
 <br>
-
-## Wiki
 
 ## CI
 Travis CI를 사용합니다.<br>
