@@ -22,15 +22,28 @@ public class UserService {
     }
 
     @Transactional
-    public User retrieveUser(int id) {
-        Optional<User> user = userRepository.findById(id);
+    public User retrieveUser(int userId) {
+        Optional<User> user = userRepository.findById(userId);
 
         if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
         }
 
         return user.get();
     }
 
+    @Transactional
+    public void insertUser(User user) {
+        userRepository.save(user);
+    }
 
+    @Transactional
+    public void deleteUser(int userId) {
+        userRepository.deleteById(userId);
+    }
+
+//    @Transactional
+//    public User updateUser(User user) {
+//        Optional<User> user = userRepository.findById(user.getId());
+//    }
 }
