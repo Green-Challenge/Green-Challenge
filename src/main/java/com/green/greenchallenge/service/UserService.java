@@ -22,7 +22,7 @@ public class UserService {
     }
 
     @Transactional
-    public User retrieveUser(int userId) {
+    public User retrieveUser(long userId) {
         Optional<User> user = userRepository.findById(userId);
 
         if(user == null) {
@@ -38,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> deleteUser(int userId) {
+    public List<User> deleteUser(long userId) {
         Optional<User> user = userRepository.findById(userId);
 
         if(user == null) {
@@ -51,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(User user, int userId) {
+    public User updateUser(User user, long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (!optionalUser.isPresent()) {
