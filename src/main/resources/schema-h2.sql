@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS user CASCADE;
 
 CREATE TABLE user
 (
-    user_id      INTEGER ,
+    user_id      INTEGER    auto_increment,
     id          varchar(20),
     password    varchar(100),
     name        varchar(100),

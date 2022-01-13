@@ -28,5 +28,6 @@ spring:
                 format_sql: true
         hibernate:
             ddl-auto: none
+            use-new-id-generator-mappings: false
 server:
     port: 8080
