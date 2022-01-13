@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class Api {
+public class GreenApi {
     private final UserService userService;
 
     @GetMapping("/users")
