@@ -23,22 +23,17 @@ public class Api {
     }
 
     @PostMapping("/users")
-    public List<User> insertUser(User user) {
-        System.out.println(user);
-        userService.insertUser(user);
-
-        return userService.retrieveUsers();
+    public User insertUser(@RequestBody User user) {
+        return userService.insertUser(user);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users/{userId}")
     public List<User> deleteUser(@PathVariable int userId) {
-        userService.deleteUser(userId);
-
-        return userService.retrieveUsers();
+        return userService.deleteUser(userId);
     }
 
-//    @PutMapping("/users")
-//    public User updateUser(User user) {
-//        return userService.updateUser(user);
-//    }
+    @PutMapping("/users/{userId}")
+    public User updateUser(@RequestBody User user, @PathVariable int userId) {
+        return userService.updateUser(user, userId);
+    }
 }

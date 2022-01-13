@@ -33,17 +33,37 @@ public class UserService {
     }
 
     @Transactional
-    public void insertUser(User user) {
-        userRepository.save(user);
+    public User insertUser(User user) {
+        return userRepository.save(user);
     }
 
     @Transactional
-    public void deleteUser(int userId) {
+    public List<User> deleteUser(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if(user == null) {
+            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+        }
+
         userRepository.deleteById(userId);
+
+        return userRepository.findAll();
     }
 
-//    @Transactional
-//    public User updateUser(User user) {
-//        Optional<User> user = userRepository.findById(user.getId());
-//    }
+    @Transactional
+    public User updateUser(User user, int userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+        }
+
+        User selectedUser = optionalUser.get();
+        selectedUser.setId(user.getId());
+        selectedUser.setPassword(user.getPassword());
+        selectedUser.setName(user.getName());
+        selectedUser.setAge(user.getAge());
+
+        return userRepository.save(selectedUser);
+    }
 }
