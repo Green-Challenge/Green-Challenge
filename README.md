@@ -1,4 +1,4 @@
-Green-Challenge!
+Green-Challenge
 =============
 친환경 알고리즘 및 챌린지 프로젝트 입니다.<br>
 
@@ -45,6 +45,9 @@ Git Flow를 사용하여 브랜치를 관리합니다.<br>
 ## 사용 기술 및 환경
 Spring boot, Maven, JPA, AWS, MariaDB, Github action, S3, CodeDeploy, Java11, Nginx
 <br>
+
+## Wiki
+팀 회의록 노션 : https://www.notion.so/9ebdfa1a50da42d0bd211bfd6b640dee?v=1584de5c46384d959dda24517a3a2f76
 
 ## CI
 Github action을 사용합니다.<br>
