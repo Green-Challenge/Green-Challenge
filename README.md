@@ -56,7 +56,7 @@ develop 브랜치에 push 및 PR시 마다 자동 Build 및 Test를 적용합니
 ## CD
 AWS S3, CodeDeploy를 이용하여 ec2 서버에 자동 배포합니다.<br>
 
-##Database
+## Database
 - MariaDB<br><br>
 
 ## 화면 설계
