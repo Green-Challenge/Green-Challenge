@@ -5,7 +5,7 @@ cd $REPOSITORY
 
 APP_NAME=green-challenge
 JAR_NAME=$(ls $REPOSITORY/target/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+JAR_PATH=$REPOSITORY/target/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
