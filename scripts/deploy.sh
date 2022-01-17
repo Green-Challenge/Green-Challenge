@@ -3,9 +3,9 @@
 REPOSITORY=/home/ec2-user/green-challenge
 cd $REPOSITORY
 
-APP_NAME=green-challenge
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+APP_NAME=Green-Challenge
+JAR_NAME=$(ls $REPOSITORY/target/ | grep 'SNAPSHOT.jar' | head -n 1)
+JAR_PATH=$REPOSITORY/target/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -19,4 +19,4 @@ else
 fi
 
 echo "> $JAR_PATH 배포"
-nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar $JAR_PATH >> /home/ec2-user/deploy.log 2>/home/ec2-user/deploy_err.log &
