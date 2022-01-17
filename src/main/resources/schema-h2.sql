@@ -2,11 +2,12 @@ DROP TABLE IF EXISTS user CASCADE;
 
 CREATE TABLE user
 (
-    user_id      bigint    auto_increment,
-    id          varchar(20),
+    uid      bigint    auto_increment,
+    email       varchar(100),
     password    varchar(100),
     name        varchar(100),
-    age         INTEGER,
+    nickname    varchar(100),
+    address     varchar(100)
 
-    PRIMARY KEY (user_id)
+        PRIMARY KEY (uid)
 );
