@@ -22,11 +22,11 @@ public class UserService {
     }
 
     @Transactional
-    public User retrieveUser(long userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public User retrieveUser(long uid) {
+        Optional<User> user = userRepository.findById(uid);
 
         if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
         }
 
         return user.get();
@@ -38,31 +38,33 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> deleteUser(long userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public List<User> deleteUser(long uid) {
+        Optional<User> user = userRepository.findById(uid);
 
         if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
         }
 
-        userRepository.deleteById(userId);
+        userRepository.deleteById(uid);
 
         return userRepository.findAll();
     }
 
     @Transactional
-    public User updateUser(User user, long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    public User updateUser(User user, long uid) {
+        Optional<User> optionalUser = userRepository.findById(uid);
 
         if (!optionalUser.isPresent()) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
         }
 
         User selectedUser = optionalUser.get();
-        selectedUser.setId(user.getId());
-        selectedUser.setPassword(user.getPassword());
+        selectedUser.setUid(user.getUid());
         selectedUser.setName(user.getName());
-        selectedUser.setAge(user.getAge());
+        selectedUser.setEmail(user.getEmail());
+        selectedUser.setPassword(user.getPassword());
+        selectedUser.setNickname(user.getNickname());
+        selectedUser.setAddress(user.getAddress());
 
         return userRepository.save(selectedUser);
     }
