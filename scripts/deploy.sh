@@ -4,7 +4,7 @@ REPOSITORY=/home/ec2-user/green-challenge
 cd $REPOSITORY
 
 APP_NAME=Green-Challenge
-JAR_NAME=$(ls $REPOSITORY/target/ | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_NAME=$(ls $REPOSITORY/target/ | grep 'SNAPSHOT.jar' | head -n 1)
 JAR_PATH=$REPOSITORY/target/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
