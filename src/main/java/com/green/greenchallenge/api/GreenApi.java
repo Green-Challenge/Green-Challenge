@@ -17,9 +17,9 @@ public class GreenApi {
         return userService.retrieveUsers();
     }
 
-    @GetMapping("/users/{userId}")
-    public User retrieveUser(@PathVariable long userId) {
-        return userService.retrieveUser(userId);
+    @GetMapping("/users/{uid}")
+    public User retrieveUser(@PathVariable long uid) {
+        return userService.retrieveUser(uid);
     }
 
     @PostMapping("/users")
@@ -27,13 +27,13 @@ public class GreenApi {
         return userService.insertUser(user);
     }
 
-    @DeleteMapping("/users/{userId}")
-    public List<User> deleteUser(@PathVariable long userId) {
-        return userService.deleteUser(userId);
+    @DeleteMapping("/users/{uid}")
+    public List<User> deleteUser(@PathVariable long uid) {
+        return userService.deleteUser(uid);
     }
 
-    @PutMapping("/users/{userId}")
-    public User updateUser(@RequestBody User user, @PathVariable long userId) {
-        return userService.updateUser(user, userId);
+    @PutMapping("/users/{uid}")
+    public User updateUser(@RequestBody User user, @PathVariable long uid) {
+        return userService.updateUser(user, uid);
     }
 }
