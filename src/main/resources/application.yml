@@ -1,27 +1,18 @@
 spring:
-    h2:
-        console:
-            enabled: true
-            path: /h2-console
     datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/green_challenge
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://localhost:3306/green_challenge
         username: root
         password:
         hikari:
             minimum-idle: 1
             maximum-pool-size: 5
-            pool-name: MYSQL_DB
     mvc:
         hiddenmethod:
             filter:
                 enabled: true
-    sql:
-        init:
-            platform: mysql
     jpa:
         show-sql: true
-        database: mysql
         database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
         properties:
             hibernate:
