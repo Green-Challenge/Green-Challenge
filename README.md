@@ -61,6 +61,6 @@ AWS S3, CodeDeploy를 이용하여 ec2 서버에 자동 배포합니다.<br>
 
 ## 화면 설계
 피그마 링크 : 
-https://www.figma.com/file/tvrs83gUldaQeS9vbjqcLD/%ED%8C%A8%EC%BA%A0-%EB%84%A4%EC%9D%B4%EB%B2%84%EC%8A%A4-(Copy)?node-id=2%3A4
+
 
 ## 프로젝트 DB ERD
