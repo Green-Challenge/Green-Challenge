@@ -62,7 +62,7 @@ public class UserService {
         selectedUser.setEmail(user.getEmail());
         selectedUser.setPassword(user.getPassword());
         selectedUser.setName(user.getName());
-        selectedUser.setNickname(user.getNickname());
+        selectedUser.setNickName(user.getNickName());
         selectedUser.setAddress(user.getAddress());
 
         return userRepository.save(selectedUser);
