@@ -10,7 +10,9 @@ public class Tree {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long treeId;
-    private long challengeId;
+
+    @OneToOne
+    private Challenge challengeId;
     private String treeName;
     private String treeImg;
 }
