@@ -13,7 +13,12 @@ public class Participant {
     @Column(name = "participant_id", nullable = false)
     private Long participantId;
 
-    private Long userId;
-    private Long challengeId;
+    @ManyToOne
+    @JoinColumn(name= "User")
+    private User userId;
+
+    @ManyToOne
+    @JoinColumn(name = "Challenge")
+    private Challenge challengeId;
     private LocalDate participateDate;
 }
