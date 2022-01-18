@@ -2,17 +2,20 @@ package com.green.greenchallenge.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
 @Entity
 public class MovementLog {
     @Id
-    @OneToOne
+    private Long movementId;
+
+    @ManyToOne
+    @JoinColumn(name = "User")
     private User userId;
+
+    private int distance;
 
     private String transportation;
 
