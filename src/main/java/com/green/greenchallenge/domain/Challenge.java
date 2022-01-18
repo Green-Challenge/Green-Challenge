@@ -16,6 +16,7 @@ public class Challenge {
     private String challengeName;
     private String description;
     private String challengeImg;
+    private String hashTag;
     private String transportation;
     private int goal;
     private LocalDate startDate;
