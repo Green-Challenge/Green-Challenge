@@ -3,6 +3,7 @@ package com.green.greenchallenge.service;
 import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.exception.UserNotFoundException;
 import com.green.greenchallenge.repository.UserRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +67,15 @@ public class UserService {
         selectedUser.setAddress(user.getAddress());
 
         return userRepository.save(selectedUser);
+    }
+
+    @Transactional
+    public User register(User user) {
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User signIn(User user) {
+
     }
 }
