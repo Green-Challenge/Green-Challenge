@@ -1,19 +1,16 @@
-package com.green.greenchallenge.domain;
+package com.green.greenchallenge.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserResponseDTO {
     private Long userId;
-
-    @Column(name = "email", unique = true)
     private String email;
     private String password;
     private String name;
