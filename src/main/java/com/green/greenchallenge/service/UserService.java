@@ -18,16 +18,21 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User createUser(User user) {
+    public UserResponseDTO createUser(User user) {
         User checkUser = userRepository.findByEmail(user.getEmail());
         if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
         try {
             userRepository.save(user);
         } catch (RuntimeException ex) {
-            throw new CustomException(ErrorCode.EMAIL_EXIST);
+            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        return userRepository.findById(user.getUserId()).get();
+        User savedUser = userRepository.findById(user.getUserId()).get();
+
+        return UserResponseDTO.builder()
+                .userId(savedUser.getUserId())
+                .name(savedUser.getName())
+                .build();
     }
 
     @Transactional
@@ -43,15 +48,35 @@ public class UserService {
     public User getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
-        if(profile == null) {
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        }
+        if(profile == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         return profile.get();
     }
 
     @Transactional
     public UserResponseDTO updateProfile(User user) {
-        return null;
+        Optional<User> selectedUser = userRepository.findById(user.getUserId());
+
+        if(selectedUser == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        User updatedUser = selectedUser.get();
+
+        updatedUser.setProfileImg(user.getProfileImg());
+        updatedUser.setNickName(user.getNickName());
+        updatedUser.setSiNm(user.getSiNm());
+        updatedUser.setSggNm(user.getSggNm());
+
+        try {
+            userRepository.save(updatedUser);
+        } catch (RuntimeException ex) {
+            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
+        }
+
+        User savedUser = userRepository.findById(user.getUserId()).get();
+
+        return UserResponseDTO.builder()
+                .userId(savedUser.getUserId())
+                .name(savedUser.getName())
+                .build();
     }
 }

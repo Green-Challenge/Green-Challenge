@@ -8,7 +8,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CustomException.class)
-    public final ResponseEntity<ErrorResponse> handleAllExceptions(CustomException e) {
+    public final ResponseEntity<ErrorResponse> handleCustomExceptions(CustomException e) {
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
+
+//    @ExceptionHandler(Exception.class)
+//    public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+//        return ErrorResponse.toResponseEntity(e.getErrorCode());
+//    }
 }

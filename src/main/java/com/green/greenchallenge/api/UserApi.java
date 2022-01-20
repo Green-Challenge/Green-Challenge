@@ -15,13 +15,8 @@ public class UserApi {
     private final UserService userService;
 
     @PostMapping("/auth")
-    public ResponseEntity createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return new ResponseEntity(UserResponseDTO.builder()
-                .userId(createdUser.getUserId())
-                .name(createdUser.getName())
-                .build()
-                ,HttpStatus.CREATED);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody User user) {
+        return new ResponseEntity(userService.createUser(user), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/auth/{email}")
@@ -35,6 +30,7 @@ public class UserApi {
     @GetMapping("/profile/{userId}")
     public ResponseEntity getProfile(@PathVariable long userId) {
         User profile = userService.getProfile(userId);
+
         return new ResponseEntity(UserResponseDTO.builder()
                 .profileImg(profile.getProfileImg())
                 .nickName(profile.getNickName())
@@ -46,13 +42,11 @@ public class UserApi {
 
     @PutMapping("/profile")
     public ResponseEntity updateProfile(@RequestBody User user) {
-        User profile = userService.getProfile(user.getUserId());
-        return new ResponseEntity(UserResponseDTO.builder()
-                .profileImg(profile.getProfileImg())
-                .nickName(profile.getNickName())
-                .siNm(profile.getSiNm())
-                .sggNm(profile.getSggNm())
-                .build()
-                , HttpStatus.OK);
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity inputProfile(@RequestBody User user) {
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
     }
 }
