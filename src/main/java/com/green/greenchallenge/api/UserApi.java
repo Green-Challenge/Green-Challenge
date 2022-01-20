@@ -60,16 +60,13 @@ public class UserApi {
         return userService.signIn(user);
     }
 
-    /*
     @PostMapping("/profile")
     public User getProfile(@RequestBody User user) {
-
+      return userService.getProfile(user);
     }
 
     @PutMapping("/profile")
     public User setProfile(@RequestBody User user) {
-
+        return userService.editProfile(user);
     }
-
-     */
 }

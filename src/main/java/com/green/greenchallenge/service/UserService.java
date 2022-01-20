@@ -88,10 +88,24 @@ public class UserService {
         return findUser;
     }
 
-    /*
     @Transactional
     public User getProfile(User user) {
-        User findUser = (User) userRepository.findAllById(user.getUserId());
+        Optional<User> findUser = userRepository.findById(user.getUserId());
+
+        return findUser.get();
     }
-     */
+
+    @Transactional
+    public User editProfile(User user) {
+        Optional<User> findUser = userRepository.findById(user.getUserId());
+
+        findUser.get().setProfileImg(user.getProfileImg());
+        findUser.get().setNickName(user.getNickName());
+        findUser.get().setSiNm(user.getSiNm());
+        findUser.get().setSggNm(user.getSggNm());
+
+        userRepository.save(findUser.get());
+
+        return findUser.get();
+    }
 }
