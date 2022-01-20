@@ -2,12 +2,14 @@ package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.UserResponseDTO;
-import com.green.greenchallenge.exception.UserConflictException;
+import com.green.greenchallenge.exception.CustomException;
+import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +19,12 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
+        User checkUser = userRepository.findByEmail(user.getEmail());
+        if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
         try {
             userRepository.save(user);
         } catch (RuntimeException ex) {
-            throw new UserConflictException("중복된 사용자 입니다");
+            throw new CustomException(ErrorCode.EMAIL_EXIST);
         }
 
         return userRepository.findById(user.getUserId()).get();
@@ -36,8 +40,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO getProfile() {
-        return null;
+    public User getProfile(long userId) {
+        Optional<User> profile = userRepository.findById(userId);
+
+        if(profile == null) {
+            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
+        }
+
+        return profile.get();
     }
 
     @Transactional

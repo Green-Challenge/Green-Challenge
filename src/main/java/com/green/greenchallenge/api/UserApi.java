@@ -32,13 +32,27 @@ public class UserApi {
             return new ResponseEntity("이미 사용중인 이메일입니다.", HttpStatus.CONFLICT);
     }
 
-    @GetMapping("/profile")
-    public UserResponseDTO getProfile() {
-        return userService.getProfile();
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity getProfile(@PathVariable long userId) {
+        User profile = userService.getProfile(userId);
+        return new ResponseEntity(UserResponseDTO.builder()
+                .profileImg(profile.getProfileImg())
+                .nickName(profile.getNickName())
+                .siNm(profile.getSiNm())
+                .sggNm(profile.getSggNm())
+                .build()
+                , HttpStatus.OK);
     }
 
     @PutMapping("/profile")
-    public UserResponseDTO updateProfile(@RequestBody User user) {
-        return userService.updateProfile(user);
+    public ResponseEntity updateProfile(@RequestBody User user) {
+        User profile = userService.getProfile(user.getUserId());
+        return new ResponseEntity(UserResponseDTO.builder()
+                .profileImg(profile.getProfileImg())
+                .nickName(profile.getNickName())
+                .siNm(profile.getSiNm())
+                .sggNm(profile.getSggNm())
+                .build()
+                , HttpStatus.OK);
     }
 }
