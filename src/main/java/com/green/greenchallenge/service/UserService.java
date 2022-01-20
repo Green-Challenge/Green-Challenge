@@ -1,17 +1,15 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.exception.AlreadyExistEmailException;
+import com.green.greenchallenge.exception.CustomException;
+import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.exception.UserNotFoundException;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.IMessage;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -78,12 +76,23 @@ public class UserService {
         User getUser = userRepository.findByEmail(user.getEmail());
 
         if(getUser != null){
-            throw new AlreadyExistEmailException(String.format("Email[%s] already exist", getUser.getEmail()));
+            throw new CustomException(ErrorCode.EMAIL_EXIST);
         } else {
             userRepository.save(user);
         }
 
     }
+
+    @Transactional
+    public boolean validEmail(String email){
+        User getUser = userRepository.findByEmail(email);
+        if(getUser != null){
+            throw new CustomException(ErrorCode.EMAIL_EXIST);
+        } else {
+            return true;
+        }
+    }
+
 
 
 }
