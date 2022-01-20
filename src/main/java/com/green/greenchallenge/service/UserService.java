@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,6 @@ public class UserService {
         selectedUser.setPassword(user.getPassword());
         selectedUser.setName(user.getName());
         selectedUser.setNickName(user.getNickName());
-        selectedUser.setAddress(user.getAddress());
 
         return userRepository.save(selectedUser);
     }
@@ -76,6 +76,22 @@ public class UserService {
 
     @Transactional
     public User signIn(User user) {
+        User findUser = userRepository.findUserByEmail(user.getEmail());
+        if(findUser.getPassword().equals(user.getPassword())) {
+            findUser.setSuccess(true);
+            findUser.setErrorMsg(null);
+        } else {
+            findUser.setSuccess(false);
+            findUser.setErrorMsg("error");
+        }
 
+        return findUser;
     }
+
+    /*
+    @Transactional
+    public User getProfile(User user) {
+        User findUser = (User) userRepository.findAllById(user.getUserId());
+    }
+     */
 }

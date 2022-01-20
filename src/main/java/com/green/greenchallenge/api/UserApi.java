@@ -1,7 +1,6 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.service.RegisterRes;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -43,22 +42,34 @@ public class UserApi {
 
 
     @PostMapping("/register")
-    public RegisterRes register(@RequestBody User user) {
+    public User register(@RequestBody User user) {
         user.setCreateDate(LocalDate.now());
-        RegisterRes res = new RegisterRes();
         if(userService.register(user) == null) {
-            res.setSuccess(false);
-            res.setErrorMsg("error");
+            user.setSuccess(false);
+            user.setErrorMsg("error");
         } else {
-            res.setSuccess(true);
-            res.setErrorMsg(null);
+            user.setSuccess(true);
+            user.setErrorMsg(null);
         }
 
-        return res;
+        return user;
     }
 
     @PostMapping("/signin")
     public User signIn(@RequestBody User user) {
+        return userService.signIn(user);
+    }
+
+    /*
+    @PostMapping("/profile")
+    public User getProfile(@RequestBody User user) {
 
     }
+
+    @PutMapping("/profile")
+    public User setProfile(@RequestBody User user) {
+
+    }
+
+     */
 }
