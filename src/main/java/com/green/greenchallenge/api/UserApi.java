@@ -14,33 +14,6 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @GetMapping("/users")
-    public List<User> retrieveUsers() {
-        return userService.retrieveUsers();
-    }
-
-    @GetMapping("/users/{uid}")
-    public User retrieveUser(@PathVariable long uid) {
-        return userService.retrieveUser(uid);
-    }
-
-    @PostMapping("/users")
-    public User insertUser(@RequestBody User user) {
-        return userService.insertUser(user);
-    }
-
-    @DeleteMapping("/users/{uid}")
-    public List<User> deleteUser(@PathVariable long uid) {
-        return userService.deleteUser(uid);
-    }
-
-    @PutMapping("/users/{uid}")
-    public User updateUser(@RequestBody User user, @PathVariable long uid) {
-        return userService.updateUser(user, uid);
-    }
-
-
-
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         user.setCreateDate(LocalDate.now());
