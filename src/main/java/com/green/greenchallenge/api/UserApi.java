@@ -1,6 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
+import com.green.greenchallenge.dto.UserResponseDTO;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,67 +15,42 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class UserApi {
+
     private final UserService userService;
 
-    @GetMapping("/users")
-    public List<User> retrieveUsers() {
-        return userService.retrieveUsers();
-    }
-
-    @GetMapping("/users/{uid}")
-    public User retrieveUser(@PathVariable long uid) {
-        return userService.retrieveUser(uid);
-    }
-
-    @PostMapping("/users")
-    public User insertUser(@RequestBody User user) {
-        return userService.insertUser(user);
-    }
-
-    @DeleteMapping("/users/{uid}")
-    public List<User> deleteUser(@PathVariable long uid) {
-        return userService.deleteUser(uid);
-    }
-
-    @PutMapping("/users/{uid}")
-    public User updateUser(@RequestBody User user, @PathVariable long uid) {
-        return userService.updateUser(user, uid);
-    }
-
-    // HashMap으로 json응답
     @PostMapping("/api/auth")
-    public ResponseEntity<Object> registerUser(@RequestBody User user, Map<String, Object> map){
-        ResponseEntity<Object> responseEntity = null;
-        Map<String, Object> result = new HashMap<>();
-
-        userService.registerUser(user);
-        result.put("userId",user.getUserId());
-        result.put("name", user.getName());
-        responseEntity = new ResponseEntity<Object>(result, HttpStatus.OK);
-
-        return responseEntity;
+    public ResponseEntity registerUser(@RequestBody User user){
+        return new ResponseEntity(userService.registerUser(user), HttpStatus.OK);
     }
 
     @GetMapping("/api/auth{email}")
     public ResponseEntity<Object> emailAuth(@RequestParam String email){
-        ResponseEntity<Object> responseEntity = null;
-        Map<String, Object> result = new HashMap<>();
 
+        Map<String, Object> result = new HashMap<>();
         boolean isValidEmail = userService.validEmail(email);
         result.put("validation", isValidEmail);
-        responseEntity = new ResponseEntity<>(result, HttpStatus.OK);
 
-        return responseEntity;
+        if(isValidEmail){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+        }
+
     }
 
-    // responseDto를 이용한 응답
-//    @PostMapping("/api/auth/register")
-//    public ResponseDto registerUser(@RequestBody User user){
-//
-//        ResponseDto responseDto = new ResponseDto(true, null);
-//        userService.registerUser(user);
-//        return responseDto;
-//
-//    }
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity getProfile(@PathVariable Long userId){
+        return new ResponseEntity(userService.getProfile(userId), HttpStatus.OK);
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity updateProfile(@RequestBody User user){
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity inputProfile(@RequestBody User user){
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
+    }
 
 }
