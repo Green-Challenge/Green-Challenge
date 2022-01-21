@@ -1,15 +1,15 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
+import com.green.greenchallenge.dto.UserResponseDto;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
-import com.green.greenchallenge.exception.GlobalExceptinHandler;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @SneakyThrows
+    /*
     @Transactional
     public User register(User user) {
 
@@ -34,6 +34,26 @@ public class UserService {
             throw new RuntimeException(e);
         }
     }
+    TODO : change to UserResponseDto
+     */
+    public UserResponseDto register(UserResponseDto userResponseDto) {
+        if(userRepository.findUserByEmail(userResponseDto.getEmail()) != null) {
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
+        } else if(userResponseDto.getName() == null) {
+            throw new CustomException(ErrorCode.NULL_RESOURCE);
+        }
+
+        User user = new User();
+        user.setName(userResponseDto.getName());
+        user.setEmail(userResponseDto.getEmail());
+        user.setCreateDate(LocalDate.now());
+        user.setPassword(userResponseDto.getPassword);
+
+        try {
+
+        }
+    }
+
 
     @Transactional
     public Boolean duplicate(String email) {
@@ -60,7 +80,7 @@ public class UserService {
     @Transactional
     public User getProfile(Long userId) {
         Optional<User> findUser = userRepository.findById(userId);
-        if(findUser.isEmpty()) {
+        if (findUser.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUNDED);
         }
 

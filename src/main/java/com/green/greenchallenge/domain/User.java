@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@JsonInclude(JsonInclude.Include.NON_NULL) // NULL 값이면 JSON응답에서 제외시킴
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

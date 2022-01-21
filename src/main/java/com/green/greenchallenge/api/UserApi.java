@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class UserApi {
     private final UserService userService;
 
+    /*
     @PostMapping("/auth")
     public UserResponseDto register(@RequestBody User user) {
         user.setCreateDate(LocalDate.now());
@@ -22,6 +23,12 @@ public class UserApi {
         res.setName(user.getName());
 
         return res;
+    }
+    TODO : change to UserResponseDto
+     */
+    @PostMapping("/auth")
+    public UserResponseDto register(@RequestBody UserResponseDto userResponseDto) {
+
     }
 
     @GetMapping("/auth{email}")
