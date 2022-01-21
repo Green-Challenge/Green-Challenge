@@ -18,7 +18,6 @@ public class User {
     private String password;
     private String name;
     private String nickName;
-    private String address;
     private String siNm; // 거주지_시
     private String sggNm; // 거주지_구
     private String profileImg; // 이미지 링크
