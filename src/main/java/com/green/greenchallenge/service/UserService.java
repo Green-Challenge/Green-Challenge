@@ -19,7 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserResponseDTO createUser(User user) {
+    public User createUser(User user) {
         User checkUser = userRepository.findByEmail(user.getEmail());
 
         if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
@@ -32,12 +32,7 @@ public class UserService {
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        User savedUser = userRepository.findById(user.getUserId()).get();
-
-        return UserResponseDTO.builder()
-                .userId(savedUser.getUserId())
-                .name(savedUser.getName())
-                .build();
+        return userRepository.findById(user.getUserId()).get();
     }
 
     @Transactional
@@ -50,23 +45,16 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO getProfile(long userId) {
+    public User getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
         if(profile.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        User user = profile.get();
-
-        return UserResponseDTO.builder()
-                .profileImg(user.getProfileImg())
-                .nickName(user.getNickName())
-                .siNm(user.getSiNm())
-                .sggNm(user.getSggNm())
-                .build();
+        return profile.get();
     }
 
     @Transactional
-    public UserResponseDTO updateProfile(User user) {
+    public User updateProfile(User user) {
         Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
         if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -84,11 +72,6 @@ public class UserService {
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        User savedUser = userRepository.findById(user.getUserId()).get();
-
-        return UserResponseDTO.builder()
-                .userId(savedUser.getUserId())
-                .name(savedUser.getName())
-                .build();
+        return userRepository.findById(user.getUserId()).get();
     }
 }
