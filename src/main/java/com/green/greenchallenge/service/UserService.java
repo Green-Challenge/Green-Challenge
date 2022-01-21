@@ -1,15 +1,13 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.exception.UserException;
+import com.green.greenchallenge.exception.CustomException;
+import com.green.greenchallenge.exception.ErrorCode;
+import com.green.greenchallenge.exception.GlobalExceptinHandler;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -25,15 +23,15 @@ public class UserService {
     public User register(User user) {
 
         if (userRepository.findUserByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("email duplicated");
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
         } else if (user.getName() == null) {
-            throw new RuntimeException("null value");
+            throw new CustomException(ErrorCode.NULL_RESOURCE);
         }
 
         try {
             return userRepository.save(user);
         } catch (RuntimeException e) {
-            throw new UserException("register error");
+            throw new RuntimeException(e);
         }
     }
 
@@ -51,23 +49,25 @@ public class UserService {
         User findUser = userRepository.findUserByEmail(user.getEmail());
 
         if (findUser == null) {
-            throw new UserException(String.format("Email[%s] not founded", user.getEmail()));
+            throw new CustomException(ErrorCode.NOT_FOUNDED);
         } else if (findUser.getPassword().equals(user.getPassword())) {
             return findUser;
         } else {
-            throw new UserException(String.format("not matched password"));
+            throw new CustomException(ErrorCode.NOT_MATCHED);
         }
     }
 
     @Transactional
-    public User getProfile(User user) {
-        Optional<User> findUser = userRepository.findById(user.getUserId());
-
+    public User getProfile(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+        if(findUser.get().getEmail() == null) {
+            throw new CustomException(ErrorCode.NOT_FOUNDED);
+        }
         return findUser.get();
     }
 
     @Transactional
-    public User editProfile(User user) {
+    public User updateProfile(User user) {
         Optional<User> findUser = userRepository.findById(user.getUserId());
 
         findUser.get().setProfileImg(user.getProfileImg());

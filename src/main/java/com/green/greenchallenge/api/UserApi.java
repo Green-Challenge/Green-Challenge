@@ -34,13 +34,18 @@ public class UserApi {
         return userService.signIn(user);
     }
 
+    @GetMapping("/profile{userId}")
+    public User getProfile(@PathVariable Long userId) {
+        return userService.getProfile(userId);
+    }
+
     @PostMapping("/profile")
-    public User getProfile(@RequestBody User user) {
-        return userService.getProfile(user);
+    public User setProfile(@RequestBody User user) {
+        return userService.updateProfile(user);
     }
 
     @PutMapping("/profile")
-    public User setProfile(@RequestBody User user) {
-        return userService.editProfile(user);
+    public User editProfile(@RequestBody User user) {
+        return userService.updateProfile(user);
     }
 }
