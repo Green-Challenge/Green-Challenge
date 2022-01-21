@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,11 @@ public class UserService {
     @Transactional
     public UserResponseDTO createUser(User user) {
         User checkUser = userRepository.findByEmail(user.getEmail());
+
         if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
+
+        user.setCreateDate(LocalDate.now());
+
         try {
             userRepository.save(user);
         } catch (RuntimeException ex) {
@@ -48,7 +53,7 @@ public class UserService {
     public UserResponseDTO getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
-        if(profile == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        if(profile.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         User user = profile.get();
 
@@ -64,7 +69,7 @@ public class UserService {
     public UserResponseDTO updateProfile(User user) {
         Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
-        if(selectedUser == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         User updatedUser = selectedUser.get();
 
