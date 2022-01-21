@@ -45,12 +45,19 @@ public class UserService {
     }
 
     @Transactional
-    public User getProfile(long userId) {
+    public UserResponseDTO getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
         if(profile == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        return profile.get();
+        User user = profile.get();
+
+        return UserResponseDTO.builder()
+                .profileImg(user.getProfileImg())
+                .nickName(user.getNickName())
+                .siNm(user.getSiNm())
+                .sggNm(user.getSggNm())
+                .build();
     }
 
     @Transactional

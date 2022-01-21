@@ -29,15 +29,7 @@ public class UserApi {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity getProfile(@PathVariable long userId) {
-        User profile = userService.getProfile(userId);
-
-        return new ResponseEntity(UserResponseDTO.builder()
-                .profileImg(profile.getProfileImg())
-                .nickName(profile.getNickName())
-                .siNm(profile.getSiNm())
-                .sggNm(profile.getSggNm())
-                .build()
-                , HttpStatus.OK);
+        return new ResponseEntity(userService.getProfile(userId), HttpStatus.OK);
     }
 
     @PutMapping("/profile")
