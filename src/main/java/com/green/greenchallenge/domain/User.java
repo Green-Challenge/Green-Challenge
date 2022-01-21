@@ -36,9 +36,6 @@ public class User {
     private LocalDate createDate;
 
     @Transient
-    private boolean success;
-
-    @Transient
     private String errorMsg;
 
     @Transient

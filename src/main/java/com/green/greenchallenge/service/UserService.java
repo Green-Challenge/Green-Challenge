@@ -1,15 +1,17 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.exception.UserNotFoundException;
+import com.green.greenchallenge.exception.UserException;
 import com.green.greenchallenge.repository.UserRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.transaction.Transactional;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,23 +20,43 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @SneakyThrows
     @Transactional
     public User register(User user) {
-        return userRepository.save(user);
+
+        if (userRepository.findUserByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("email duplicated");
+        } else if (user.getName() == null) {
+            throw new RuntimeException("null value");
+        }
+
+        try {
+            return userRepository.save(user);
+        } catch (RuntimeException e) {
+            throw new UserException("register error");
+        }
+    }
+
+    @Transactional
+    public Boolean duplicate(String email) {
+        if (userRepository.findUserByEmail(email) != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Transactional
     public User signIn(User user) {
         User findUser = userRepository.findUserByEmail(user.getEmail());
-        if(findUser.getPassword().equals(user.getPassword())) {
-            findUser.setSuccess(true);
-            findUser.setErrorMsg(null);
-        } else {
-            findUser.setSuccess(false);
-            findUser.setErrorMsg("error");
-        }
 
-        return findUser;
+        if (findUser == null) {
+            throw new UserException(String.format("Email[%s] not founded", user.getEmail()));
+        } else if (findUser.getPassword().equals(user.getPassword())) {
+            return findUser;
+        } else {
+            throw new UserException(String.format("not matched password"));
+        }
     }
 
     @Transactional

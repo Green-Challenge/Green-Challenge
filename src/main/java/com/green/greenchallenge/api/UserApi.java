@@ -1,31 +1,32 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
+import com.green.greenchallenge.dto.UserResponseDto;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class UserApi {
     private final UserService userService;
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
+    @PostMapping("/auth")
+    public UserResponseDto register(@RequestBody User user) {
         user.setCreateDate(LocalDate.now());
-        if(userService.register(user) == null) {
-            user.setSuccess(false);
-            user.setErrorMsg("error");
-        } else {
-            user.setSuccess(true);
-            user.setErrorMsg(null);
-        }
+        UserResponseDto res = new UserResponseDto();
+        res.setUserId(userService.register(user).getUserId());
+        res.setName(user.getName());
 
-        return user;
+        return res;
+    }
+
+    @GetMapping("/auth{email}")
+    public Boolean duplicate(@PathVariable String email) {
+        return userService.duplicate(email);
     }
 
     @PostMapping("/signin")
@@ -35,7 +36,7 @@ public class UserApi {
 
     @PostMapping("/profile")
     public User getProfile(@RequestBody User user) {
-      return userService.getProfile(user);
+        return userService.getProfile(user);
     }
 
     @PutMapping("/profile")
