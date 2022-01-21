@@ -1,7 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.dto.UserResponseDTO;
+import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,12 +15,8 @@ public class UserApi {
     private final UserService userService;
 
     @PostMapping("/auth")
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return new ResponseEntity(UserResponseDTO.builder()
-                .userId(createdUser.getUserId())
-                .name(createdUser.getName())
-                .build(), HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        return new ResponseEntity(userService.createUser(userDTO), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/auth/{email}")
@@ -35,7 +31,7 @@ public class UserApi {
     public ResponseEntity getProfile(@PathVariable long userId) {
         User user = userService.getProfile(userId);
 
-        return new ResponseEntity(UserResponseDTO.builder()
+        return new ResponseEntity(UserDTO.builder()
                 .profileImg(user.getProfileImg())
                 .nickName(user.getNickName())
                 .siNm(user.getSiNm())
@@ -47,7 +43,7 @@ public class UserApi {
     public ResponseEntity updateProfile(@RequestBody User user) {
         User updatedUser = userService.updateProfile(user);
 
-        return new ResponseEntity(UserResponseDTO.builder()
+        return new ResponseEntity(UserDTO.builder()
                 .userId(updatedUser.getUserId())
                 .name(updatedUser.getName())
                 .build(), HttpStatus.OK);
@@ -57,7 +53,7 @@ public class UserApi {
     public ResponseEntity inputProfile(@RequestBody User user) {
         User updatedUser = userService.updateProfile(user);
 
-        return new ResponseEntity(UserResponseDTO.builder()
+        return new ResponseEntity(UserDTO.builder()
                 .userId(updatedUser.getUserId())
                 .name(updatedUser.getName())
                 .build(), HttpStatus.OK);

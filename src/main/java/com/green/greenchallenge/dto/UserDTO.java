@@ -1,0 +1,43 @@
+package com.green.greenchallenge.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.green.greenchallenge.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
+
+@Getter
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
+public class UserDTO {
+    private Long userId;
+    private String email;
+    private String password;
+    private String name;
+    private String nickName;
+    private String siNm; // 거주지_시
+    private String sggNm; // 거주지_구
+    private String profileImg; // 이미지 링크
+    private LocalDate createDate;
+
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
+
+    public User toEntity() {
+        return User.builder()
+                .userId(this.userId)
+                .email(this.email)
+                .password(this.password)
+                .name(this.name)
+                .nickName(this.nickName)
+                .siNm(this.siNm)
+                .sggNm(this.sggNm)
+                .createDate(this.createDate)
+                .build();
+    }
+}

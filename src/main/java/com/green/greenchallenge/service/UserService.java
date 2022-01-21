@@ -1,15 +1,15 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.dto.UserResponseDTO;
+import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -17,22 +17,27 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(User user) {
-        User checkUser = userRepository.findByEmail(user.getEmail());
+    public UserDTO createUser(UserDTO userDTO) {
+        User checkedUser = userRepository.findByEmail(userDTO.getEmail());
 
-        if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
+        if(checkedUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
 
-        user.setCreateDate(LocalDate.now());
+        userDTO.encodePassword(passwordEncoder);
 
         try {
-            userRepository.save(user);
+            userRepository.save(userDTO.toEntity());
         } catch (RuntimeException ex) {
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        return userRepository.findById(user.getUserId()).get();
+        User user = userRepository.findById(userDTO.getUserId()).get();
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .build();
     }
 
     @Transactional
