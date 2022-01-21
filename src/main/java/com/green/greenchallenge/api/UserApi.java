@@ -25,7 +25,7 @@ public class UserApi {
     }
 
     @GetMapping("/auth{email}")
-    public Boolean duplicate(@PathVariable String email) {
+    public Boolean duplicate(@RequestParam String email) {
         return userService.duplicate(email);
     }
 
@@ -35,7 +35,7 @@ public class UserApi {
     }
 
     @GetMapping("/profile{userId}")
-    public User getProfile(@PathVariable Long userId) {
+    public User getProfile(@RequestParam Long userId) {
         return userService.getProfile(userId);
     }
 
@@ -45,7 +45,7 @@ public class UserApi {
     }
 
     @PutMapping("/profile")
-    public User editProfile(@RequestBody User user) {
+    public User updateProfile(@RequestBody User user) {
         return userService.updateProfile(user);
     }
 }

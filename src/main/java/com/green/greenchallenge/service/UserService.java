@@ -60,9 +60,10 @@ public class UserService {
     @Transactional
     public User getProfile(Long userId) {
         Optional<User> findUser = userRepository.findById(userId);
-        if(findUser.get().getEmail() == null) {
+        if(findUser.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUNDED);
         }
+
         return findUser.get();
     }
 
