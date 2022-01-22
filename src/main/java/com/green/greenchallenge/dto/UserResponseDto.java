@@ -12,4 +12,9 @@ public class UserResponseDto {
     private String email;
     private String location;
     private String password;
+    private String nickName;
+    private String siNm;
+    private String sggNm;
+    private String profileImg;
+    private String createDate;
 }

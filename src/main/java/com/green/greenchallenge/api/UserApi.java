@@ -28,7 +28,7 @@ public class UserApi {
      */
     @PostMapping("/auth")
     public UserResponseDto register(@RequestBody UserResponseDto userResponseDto) {
-
+        return userService.register(userResponseDto);
     }
 
     @GetMapping("/auth{email}")
@@ -37,8 +37,8 @@ public class UserApi {
     }
 
     @PostMapping("/signin")
-    public User signIn(@RequestBody User user) {
-        return userService.signIn(user);
+    public UserResponseDto signIn(@RequestBody UserResponseDto userResponseDto) {
+        return userService.signIn(userResponseDto);
     }
 
     @GetMapping("/profile{userId}")

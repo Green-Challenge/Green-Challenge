@@ -34,10 +34,4 @@ public class User {
 
     @Column(nullable = false)
     private LocalDate createDate;
-
-    @Transient
-    private String errorMsg;
-
-    @Transient
-    private String location;
 }
