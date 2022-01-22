@@ -14,18 +14,6 @@ import java.time.LocalDate;
 public class UserApi {
     private final UserService userService;
 
-    /*
-    @PostMapping("/auth")
-    public UserResponseDto register(@RequestBody User user) {
-        user.setCreateDate(LocalDate.now());
-        UserResponseDto res = new UserResponseDto();
-        res.setUserId(userService.register(user).getUserId());
-        res.setName(user.getName());
-
-        return res;
-    }
-    TODO : change to UserResponseDto
-     */
     @PostMapping("/auth")
     public UserResponseDto register(@RequestBody UserResponseDto userResponseDto) {
         return userService.register(userResponseDto);
@@ -42,17 +30,17 @@ public class UserApi {
     }
 
     @GetMapping("/profile{userId}")
-    public User getProfile(@RequestParam Long userId) {
+    public UserResponseDto getProfile(@RequestParam Long userId) {
         return userService.getProfile(userId);
     }
 
     @PostMapping("/profile")
-    public User setProfile(@RequestBody User user) {
-        return userService.updateProfile(user);
+    public UserResponseDto setProfile(@RequestBody UserResponseDto userResponseDto) {
+        return userService.updateProfile(userResponseDto);
     }
 
     @PutMapping("/profile")
-    public User updateProfile(@RequestBody User user) {
-        return userService.updateProfile(user);
+    public UserResponseDto updateProfile(@RequestBody UserResponseDto userResponseDto) {
+        return userService.updateProfile(userResponseDto);
     }
 }

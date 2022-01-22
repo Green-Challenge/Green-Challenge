@@ -18,24 +18,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /*
-    @Transactional
-    public User register(User user) {
-
-        if (userRepository.findUserByEmail(user.getEmail()) != null) {
-            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
-        } else if (user.getName() == null) {
-            throw new CustomException(ErrorCode.NULL_RESOURCE);
-        }
-
-        try {
-            return userRepository.save(user);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    TODO : change to UserResponseDto
-     */
     public UserResponseDto register(UserResponseDto userResponseDto) {
         if (userRepository.findUserByEmail(userResponseDto.getEmail()) != null) {
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
@@ -57,7 +39,6 @@ public class UserService {
         }
     }
 
-
     @Transactional
     public Boolean duplicate(String email) {
         if (userRepository.findUserByEmail(email) != null) {
@@ -66,22 +47,6 @@ public class UserService {
             return false;
         }
     }
-
-    /*
-    @Transactional
-    public User signIn(User user) {
-        User findUser = userRepository.findUserByEmail(user.getEmail());
-
-        if (findUser == null) {
-            throw new CustomException(ErrorCode.NOT_FOUNDED);
-        } else if (findUser.getPassword().equals(user.getPassword())) {
-            return findUser;
-        } else {
-            throw new CustomException(ErrorCode.NOT_MATCHED);
-        }
-    }
-
-     */
 
     @Transactional
     public UserResponseDto signIn(UserResponseDto userResponseDto) {
@@ -102,26 +67,33 @@ public class UserService {
     }
 
     @Transactional
-    public User getProfile(Long userId) {
+    public UserResponseDto getProfile(Long userId) {
         Optional<User> findUser = userRepository.findById(userId);
-        if (findUser.isEmpty()) {
+        if(findUser.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUNDED);
         }
 
-        return findUser.get();
+        UserResponseDto findUserResponseDto = new UserResponseDto();
+
+        findUserResponseDto.setProfileImg(findUser.get().getProfileImg());
+        findUserResponseDto.setNickName(findUser.get().getNickName());
+        findUserResponseDto.setSiNm(findUser.get().getSiNm());
+        findUserResponseDto.setSggNm(findUser.get().getSggNm());
+
+        return findUserResponseDto;
     }
 
     @Transactional
-    public User updateProfile(User user) {
-        Optional<User> findUser = userRepository.findById(user.getUserId());
+    public UserResponseDto updateProfile(UserResponseDto userResponseDto) {
+        Optional<User> findUser = userRepository.findById(userResponseDto.getUserId());
 
-        findUser.get().setProfileImg(user.getProfileImg());
-        findUser.get().setNickName(user.getNickName());
-        findUser.get().setSiNm(user.getSiNm());
-        findUser.get().setSggNm(user.getSggNm());
+        findUser.get().setProfileImg(userResponseDto.getProfileImg());
+        findUser.get().setNickName(userResponseDto.getNickName());
+        findUser.get().setSiNm(userResponseDto.getSiNm());
+        findUser.get().setSggNm(userResponseDto.getSggNm());
 
         userRepository.save(findUser.get());
 
-        return findUser.get();
+        return userResponseDto;
     }
 }
