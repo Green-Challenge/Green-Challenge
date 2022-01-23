@@ -1,6 +1,5 @@
 package com.green.greenchallenge.exception;
 
-import com.green.greenchallenge.dto.ResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

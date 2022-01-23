@@ -1,13 +1,13 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.dto.UserResponseDTO;
+import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
-import com.green.greenchallenge.exception.UserNotFoundException;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -21,24 +21,30 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserResponseDTO insertUser(User user) {
-        User checkUser = userRepository.findByEmail(user.getEmail());
-        if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
+    public UserDTO insertUser(UserDTO userDTO) {
 
-        user.setCreateDate(LocalDate.now());
+        User checkUser = userRepository.findByEmail(userDTO.getEmail());
+        if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
+        checkUser = userDTO.toEntity();
+
+//        userDTO.setCreateDate(LocalDate.now()); // 생성시간
 
         try {
-            userRepository.save(user);
-        } catch (RuntimeException ex) {
+            System.out.println("서비스 접근중");
+            userRepository.save(checkUser);
+            System.out.println("서비스 완료");
+        } catch (RuntimeException e) {
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        User savedUser = userRepository.findById(user.getUserId()).get();
+        User savedUser = userRepository.findById(checkUser.getUserId()).get();
 
-        return UserResponseDTO.builder()
+        return UserDTO.builder()
                 .userId(savedUser.getUserId())
                 .name(savedUser.getName())
+                .email(savedUser.getEmail())
                 .build();
+
     }
 
     @Transactional
@@ -46,7 +52,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
 
         if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         userRepository.deleteById(userId);
@@ -59,7 +65,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (!optionalUser.isPresent()) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", userId));
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         User selectedUser = optionalUser.get();
@@ -67,32 +73,9 @@ public class UserService {
         selectedUser.setPassword(user.getPassword());
         selectedUser.setName(user.getName());
         selectedUser.setNickName(user.getNickName());
-        selectedUser.setAddress(user.getAddress());
+
 
         return userRepository.save(selectedUser);
-    }
-
-    @Transactional
-    public UserResponseDTO registerUser(User user){
-
-        User getUser = userRepository.findByEmail(user.getEmail());
-
-        if(getUser != null) {
-            throw new CustomException(ErrorCode.EMAIL_EXIST);
-        }
-        try {
-            userRepository.save(user);
-        } catch (RuntimeException e){
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        }
-
-        User foundUser = userRepository.findById(user.getUserId()).get();
-
-        return UserResponseDTO.builder()
-                .userId(foundUser.getUserId())
-                .name(foundUser.getName())
-                .build();
-
     }
 
     @Transactional
@@ -107,14 +90,14 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDTO getProfile(long userId){
+    public UserDTO getProfile(long userId){
         Optional<User> profile = userRepository.findById(userId);
 
         if(profile == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         User user = profile.get();
 
-        return UserResponseDTO.builder()
+        return UserDTO.builder()
                 .profileImg(user.getProfileImg())
                 .nickName(user.getNickName())
                 .siNm(user.getSiNm())
@@ -123,31 +106,41 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO updateProfile(User user) {
-        Optional<User> getUser = userRepository.findById(user.getUserId());
+    public UserDTO updateProfile(UserDTO userDTO) {
+        User getUser = userRepository.findById(userDTO.getUserId()).get();
 
         if(getUser == null){
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         } else {
-            User newUser = getUser.get();
-            newUser.setProfileImg(user.getProfileImg());
-            newUser.setNickName(user.getNickName());
-            newUser.setSiNm(user.getSiNm());
-            newUser.setSggNm(user.getSggNm());
+            System.out.println("UserId: " + getUser.getUserId());
+
+            userDTO.setUserId(getUser.getUserId());
+            userDTO.setEmail(getUser.getEmail());
+            userDTO.setPassword(getUser.getPassword());
+            userDTO.setName(getUser.getName());
+            userDTO.setCreateDate(getUser.getCreateDate());
+
+            System.out.println("userDTO를 Entity로 변환 시도");
+            User updatingUser = userDTO.toEntity();
+            System.out.println("변환 완료");
 
             try {
-                userRepository.save(newUser);
+                System.out.println("update 서비스 접근 중");
+                userRepository.save(updatingUser);
+                System.out.println("update 서비스 완료");
             } catch (RuntimeException ex) {
                 throw new CustomException(ErrorCode.UNKNOWN_ERROR);
             }
 
         }
 
-        User updatedUser = userRepository.findById(user.getUserId()).get();
+        User updatedUser = userRepository.findById(userDTO.getUserId()).get();
 
-        return UserResponseDTO.builder()
-                .userId(updatedUser.getUserId())
-                .name(updatedUser.getName())
+        return UserDTO.builder()
+                .nickName(updatedUser.getNickName())
+                .siNm(updatedUser.getSiNm())
+                .sggNm(updatedUser.getSggNm())
+                .profileImg(updatedUser.getProfileImg())
                 .build();
     }
 

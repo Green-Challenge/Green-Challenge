@@ -1,7 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.dto.UserResponseDTO;
+import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,21 +9,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = "/api")
 public class UserApi {
 
     private final UserService userService;
 
-    @PostMapping("/api/auth")
-    public ResponseEntity registerUser(@RequestBody User user){
-        return new ResponseEntity(userService.registerUser(user), HttpStatus.OK);
+    @PostMapping("/auth")
+    public ResponseEntity<UserDTO> insertUser(@RequestBody UserDTO userDTO){
+        return new ResponseEntity(userService.insertUser(userDTO), HttpStatus.OK);
     }
 
-    @GetMapping("/api/auth{email}")
+    @GetMapping("/auth{email}")
     public ResponseEntity<Object> emailAuth(@RequestParam String email){
 
         Map<String, Object> result = new HashMap<>();
@@ -39,18 +39,18 @@ public class UserApi {
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity getProfile(@PathVariable Long userId){
+    public ResponseEntity<UserDTO> getProfile(@PathVariable Long userId){
         return new ResponseEntity(userService.getProfile(userId), HttpStatus.OK);
     }
 
     @PostMapping("/profile")
-    public ResponseEntity updateProfile(@RequestBody User user){
-        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateProfile(@RequestBody UserDTO userDTO){
+        return new ResponseEntity(userService.updateProfile(userDTO), HttpStatus.OK);
     }
 
     @PutMapping("/profile")
-    public ResponseEntity inputProfile(@RequestBody User user){
-        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
+    public ResponseEntity<UserDTO> inputProfile(@RequestBody UserDTO userDTO){
+        return new ResponseEntity(userService.updateProfile(userDTO), HttpStatus.OK);
     }
 
 }
