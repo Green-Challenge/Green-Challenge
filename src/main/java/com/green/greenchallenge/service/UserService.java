@@ -6,11 +6,10 @@ import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,76 +17,39 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDTO insertUser(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO) {
+        User checkedUser = userRepository.findByEmail(userDTO.getEmail());
 
-        User checkUser = userRepository.findByEmail(userDTO.getEmail());
-        if(checkUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
-        checkUser = userDTO.toEntity();
+        if(checkedUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
 
-//        userDTO.setCreateDate(LocalDate.now()); // 생성시간
+        userDTO.encodePassword(passwordEncoder);
 
-            System.out.println("서비스 접근중");
-            userRepository.save(checkUser);
-            System.out.println("서비스 완료");
+        userRepository.save(userDTO.toEntity());
 
-        User savedUser = userRepository.findById(checkUser.getUserId()).get();
-
+        User user = userRepository.findByEmail(userDTO.getEmail());
         return UserDTO.builder()
-                .userId(savedUser.getUserId())
-                .name(savedUser.getName())
-                .email(savedUser.getEmail())
+                .userId(user.getUserId())
+                .name(user.getName())
                 .build();
-
     }
 
     @Transactional
-    public List<User> deleteUser(long userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean idDuplicated(String email) {
+        User user = userRepository.findByEmail(email);
 
-        if(user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+        if(user == null) return true;
 
-        userRepository.deleteById(userId);
-
-        return userRepository.findAll();
+        return false;
     }
 
     @Transactional
-    public User updateUser(User user, long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-
-        if (!optionalUser.isPresent()) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        User selectedUser = optionalUser.get();
-        selectedUser.setEmail(user.getEmail());
-        selectedUser.setPassword(user.getPassword());
-        selectedUser.setName(user.getName());
-        selectedUser.setNickName(user.getNickName());
-
-
-        return userRepository.save(selectedUser);
-    }
-
-    @Transactional
-    public boolean validEmail(String email){
-        User getUser = userRepository.findByEmail(email);
-        if(getUser != null){
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Transactional
-    public UserDTO getProfile(long userId){
+    public UserDTO getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
-        if(profile == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        if(profile.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         User user = profile.get();
 
@@ -100,34 +62,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateProfile(UserDTO userDTO) {
-        User getUser = userRepository.findById(userDTO.getUserId()).get();
+    public UserDTO updateProfile(UserDTO user) {
+        Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
-        if(getUser == null){
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        } else {
-            System.out.println("UserId: " + getUser.getUserId());
+        if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-            userDTO.setUserId(getUser.getUserId());
-            userDTO.setEmail(getUser.getEmail());
-            userDTO.setPassword(getUser.getPassword());
-            userDTO.setName(getUser.getName());
-            userDTO.setCreateDate(getUser.getCreateDate());
+        User updatedUser = selectedUser.get();
 
-            User updatingUser = userDTO.toEntity();
+        updatedUser.setProfileImg(user.getProfileImg());
+        updatedUser.setNickName(user.getNickName());
+        updatedUser.setSiNm(user.getSiNm());
+        updatedUser.setSggNm(user.getSggNm());
 
-            userRepository.save(updatingUser);
+        userRepository.save(updatedUser);
 
-        }
-
-        User updatedUser = userRepository.findById(userDTO.getUserId()).get();
-
+        User savedUser = userRepository.findById(user.getUserId()).get();
         return UserDTO.builder()
-                .nickName(updatedUser.getNickName())
-                .siNm(updatedUser.getSiNm())
-                .sggNm(updatedUser.getSggNm())
-                .profileImg(updatedUser.getProfileImg())
+                .userId(savedUser.getUserId())
+                .name(savedUser.getName())
                 .build();
     }
-
 }
