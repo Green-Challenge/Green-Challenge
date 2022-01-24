@@ -27,13 +27,9 @@ public class UserService {
 
         userDTO.encodePassword(passwordEncoder);
 
-        try {
-            userRepository.save(userDTO.toEntity());
-        } catch (RuntimeException ex) {
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        }
+        userRepository.save(userDTO.toEntity());
 
-        User user = userRepository.findById(userDTO.getUserId()).get();
+        User user = userRepository.findByEmail(userDTO.getEmail());
         return UserDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
@@ -50,16 +46,23 @@ public class UserService {
     }
 
     @Transactional
-    public User getProfile(long userId) {
+    public UserDTO getProfile(long userId) {
         Optional<User> profile = userRepository.findById(userId);
 
         if(profile.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        return profile.get();
+        User user = profile.get();
+
+        return UserDTO.builder()
+                .profileImg(user.getProfileImg())
+                .nickName(user.getNickName())
+                .siNm(user.getSiNm())
+                .sggNm(user.getSggNm())
+                .build();
     }
 
     @Transactional
-    public User updateProfile(User user) {
+    public UserDTO updateProfile(User user) {
         Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
         if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -77,6 +80,10 @@ public class UserService {
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        return userRepository.findById(user.getUserId()).get();
+        User savedUser = userRepository.findById(user.getUserId()).get();
+        return UserDTO.builder()
+                .userId(savedUser.getUserId())
+                .name(savedUser.getName())
+                .build();
     }
 }

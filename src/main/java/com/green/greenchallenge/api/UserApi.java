@@ -29,33 +29,16 @@ public class UserApi {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity getProfile(@PathVariable long userId) {
-        User user = userService.getProfile(userId);
-
-        return new ResponseEntity(UserDTO.builder()
-                .profileImg(user.getProfileImg())
-                .nickName(user.getNickName())
-                .siNm(user.getSiNm())
-                .sggNm(user.getSggNm())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(userService.getProfile(userId), HttpStatus.OK);
     }
 
     @PutMapping("/profile")
     public ResponseEntity updateProfile(@RequestBody User user) {
-        User updatedUser = userService.updateProfile(user);
-
-        return new ResponseEntity(UserDTO.builder()
-                .userId(updatedUser.getUserId())
-                .name(updatedUser.getName())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
     }
 
     @PostMapping("/profile")
     public ResponseEntity inputProfile(@RequestBody User user) {
-        User updatedUser = userService.updateProfile(user);
-
-        return new ResponseEntity(UserDTO.builder()
-                .userId(updatedUser.getUserId())
-                .name(updatedUser.getName())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
     }
 }

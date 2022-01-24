@@ -2,9 +2,7 @@ package com.green.greenchallenge.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.green.greenchallenge.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -13,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
     private Long userId;
     private String email;
