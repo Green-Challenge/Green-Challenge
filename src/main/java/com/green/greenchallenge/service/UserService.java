@@ -1,13 +1,15 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
-import com.green.greenchallenge.exception.UserNotFoundException;
+import com.green.greenchallenge.dto.UserDTO;
+import com.green.greenchallenge.exception.CustomException;
+import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,56 +17,69 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public List<User> retrieveUsers() {
-        return userRepository.findAll();
+    public UserDTO createUser(UserDTO userDTO) {
+        User checkedUser = userRepository.findByEmail(userDTO.getEmail());
+
+        if(checkedUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
+
+        userDTO.encodePassword(passwordEncoder);
+
+        userRepository.save(userDTO.toEntity());
+
+        User user = userRepository.findByEmail(userDTO.getEmail());
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .build();
     }
 
     @Transactional
-    public User retrieveUser(long uid) {
-        Optional<User> user = userRepository.findById(uid);
+    public Boolean idDuplicated(String email) {
+        User user = userRepository.findByEmail(email);
 
-        if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
-        }
+        if(user == null) return true;
 
-        return user.get();
+        return false;
     }
 
     @Transactional
-    public User insertUser(User user) {
-        return userRepository.save(user);
+    public UserDTO getProfile(long userId) {
+        Optional<User> profile = userRepository.findById(userId);
+
+        if(profile.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        User user = profile.get();
+
+        return UserDTO.builder()
+                .profileImg(user.getProfileImg())
+                .nickName(user.getNickName())
+                .siNm(user.getSiNm())
+                .sggNm(user.getSggNm())
+                .build();
     }
 
     @Transactional
-    public List<User> deleteUser(long uid) {
-        Optional<User> user = userRepository.findById(uid);
+    public UserDTO updateProfile(UserDTO user) {
+        Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
-        if(user == null) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
-        }
+        if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        userRepository.deleteById(uid);
+        User updatedUser = selectedUser.get();
 
-        return userRepository.findAll();
-    }
+        updatedUser.setProfileImg(user.getProfileImg());
+        updatedUser.setNickName(user.getNickName());
+        updatedUser.setSiNm(user.getSiNm());
+        updatedUser.setSggNm(user.getSggNm());
 
-    @Transactional
-    public User updateUser(User user, long uid) {
-        Optional<User> optionalUser = userRepository.findById(uid);
+        userRepository.save(updatedUser);
 
-        if (!optionalUser.isPresent()) {
-            throw new UserNotFoundException(String.format("ID[%s] not found", uid));
-        }
-
-        User selectedUser = optionalUser.get();
-        selectedUser.setEmail(user.getEmail());
-        selectedUser.setPassword(user.getPassword());
-        selectedUser.setName(user.getName());
-        selectedUser.setNickName(user.getNickName());
-        selectedUser.setAddress(user.getAddress());
-
-        return userRepository.save(selectedUser);
+        User savedUser = userRepository.findById(user.getUserId()).get();
+        return UserDTO.builder()
+                .userId(savedUser.getUserId())
+                .name(savedUser.getName())
+                .build();
     }
 }
