@@ -3,7 +3,7 @@ spring:
         driver-class-name: org.mariadb.jdbc.Driver
         url: jdbc:mariadb://localhost:3306/green_challenge
         username: root
-        password:
+        password: leslie1213
         hikari:
             minimum-idle: 1
             maximum-pool-size: 5
@@ -18,7 +18,12 @@ spring:
             hibernate:
                 format_sql: true
         hibernate:
-            ddl-auto: none
+            ddl-auto: create
             use-new-id-generator-mappings: false
 server:
     port: 8080
+    error:
+        include-exception: false      # Response 에 Exception 을 표시할지
+        include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
+        include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
+        whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
