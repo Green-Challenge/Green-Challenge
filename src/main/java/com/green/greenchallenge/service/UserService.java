@@ -62,7 +62,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateProfile(User user) {
+    public UserDTO updateProfile(UserDTO user) {
         Optional<User> selectedUser = userRepository.findById(user.getUserId());
 
         if(selectedUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -74,11 +74,7 @@ public class UserService {
         updatedUser.setSiNm(user.getSiNm());
         updatedUser.setSggNm(user.getSggNm());
 
-        try {
-            userRepository.save(updatedUser);
-        } catch (RuntimeException ex) {
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        }
+        userRepository.save(updatedUser);
 
         User savedUser = userRepository.findById(user.getUserId()).get();
         return UserDTO.builder()

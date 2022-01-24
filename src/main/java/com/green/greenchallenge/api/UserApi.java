@@ -1,6 +1,5 @@
 package com.green.greenchallenge.api;
 
-import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +32,12 @@ public class UserApi {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity updateProfile(@RequestBody User user) {
+    public ResponseEntity updateProfile(@RequestBody UserDTO user) {
         return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
     }
 
     @PostMapping("/profile")
-    public ResponseEntity inputProfile(@RequestBody User user) {
+    public ResponseEntity inputProfile(@RequestBody UserDTO user) {
         return new ResponseEntity(userService.updateProfile(user), HttpStatus.OK);
     }
 }
