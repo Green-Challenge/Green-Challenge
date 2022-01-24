@@ -4,6 +4,8 @@ import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.UserResponseDto;
 import com.green.greenchallenge.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,8 +17,8 @@ public class UserApi {
     private final UserService userService;
 
     @PostMapping("/auth")
-    public UserResponseDto register(@RequestBody UserResponseDto userResponseDto) {
-        return userService.register(userResponseDto);
+    public ResponseEntity<UserResponseDto> register(@RequestBody UserResponseDto userResponseDto) {
+        return new ResponseEntity(userService.register(userResponseDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/auth{email}")
