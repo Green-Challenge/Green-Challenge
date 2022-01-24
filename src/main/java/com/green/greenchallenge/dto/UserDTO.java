@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 
@@ -24,6 +25,7 @@ public class UserDTO {
     private String siNm; // 거주지_시
     private String sggNm; // 거주지_구
     private String profileImg; // 이미지 링크
+    @CreatedDate
     private LocalDate createDate;
 //    private LocalDate updateDate;
 

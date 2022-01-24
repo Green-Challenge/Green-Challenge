@@ -7,10 +7,9 @@ import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +28,9 @@ public class UserService {
 
 //        userDTO.setCreateDate(LocalDate.now()); // 생성시간
 
-        try {
             System.out.println("서비스 접근중");
             userRepository.save(checkUser);
             System.out.println("서비스 완료");
-        } catch (RuntimeException e) {
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        }
 
         User savedUser = userRepository.findById(checkUser.getUserId()).get();
 
@@ -88,7 +83,6 @@ public class UserService {
         }
     }
 
-
     @Transactional
     public UserDTO getProfile(long userId){
         Optional<User> profile = userRepository.findById(userId);
@@ -120,17 +114,9 @@ public class UserService {
             userDTO.setName(getUser.getName());
             userDTO.setCreateDate(getUser.getCreateDate());
 
-            System.out.println("userDTO를 Entity로 변환 시도");
             User updatingUser = userDTO.toEntity();
-            System.out.println("변환 완료");
 
-            try {
-                System.out.println("update 서비스 접근 중");
-                userRepository.save(updatingUser);
-                System.out.println("update 서비스 완료");
-            } catch (RuntimeException ex) {
-                throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-            }
+            userRepository.save(updatingUser);
 
         }
 

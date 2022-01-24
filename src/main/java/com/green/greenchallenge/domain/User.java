@@ -21,11 +21,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long userId;
-    @Column(name="email", nullable = false)
     private String email;
-    @Column(name="password", nullable = false)
     private String password;
-    @Column(name="name", nullable = false)
     private String name;
     private String nickName;
     private String siNm; // 거주지_시
