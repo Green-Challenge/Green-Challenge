@@ -24,6 +24,6 @@ public class AuthService {
 
         if(!passwordEncoder.matches(userDTO.getPassword(), loginUser.getPassword()))
             throw new CustomException(ErrorCode.UNKNOWN_ERROR);
-        return jwtProvider.createToken(String.valueOf(loginUser.getUserId()));
+        return jwtProvider.createToken(String.valueOf(loginUser.getUserId()), userDTO.getRoles());
     }
 }
