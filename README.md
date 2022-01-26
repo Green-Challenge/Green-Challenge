@@ -64,5 +64,5 @@ AWS S3, CodeDeploy를 이용하여 ec2 서버에 자동 배포합니다.<br>
 
 
 ## 프로젝트 DB ERD
-![Green-Challenge ERD](https://user-images.githubusercontent.com/32195300/149892681-cf71645b-48f9-4d02-91b7-eb461b222582.png)
+![Green-Challenge ERD](https://user-images.githubusercontent.com/32195300/151131279-aced410d-b9b8-4590-9bc0-aef5a3f84843.png)
 
