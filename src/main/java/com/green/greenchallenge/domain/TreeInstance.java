@@ -10,27 +10,19 @@ import java.time.LocalDate;
 @Data
 @Entity
 @DynamicInsert
-public class Participant {
+public class TreeInstance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long participantId;
-
-    @ManyToOne
-    @JoinColumn(name= "User")
-    private User userId;
+    @Column
+    private Long treeInstanceId;
 
     @ManyToOne
     @JoinColumn(name = "Challenge")
     private Challenge challengeId;
 
-    @Column(nullable = false)
-    private LocalDate participateDate;
-
-    @Column(nullable = false)
+    @Column
     @ColumnDefault("0")
-    private int leafCount;
+    private int numberOfLeaf;
 
-    @Column(nullable = false)
-    @ColumnDefault("0")
-    private double totalDistance;
+    private LocalDate finishedDate;
 }
