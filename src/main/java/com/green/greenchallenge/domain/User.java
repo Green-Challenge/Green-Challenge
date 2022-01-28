@@ -22,9 +22,11 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String name;
     private String nickName;
     private String siNm; // 거주지_시
@@ -32,5 +34,10 @@ public class User {
     private String profileImg; // 이미지 링크
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDate createDate;
+    @Column(nullable = false)
+    private String roles;
+    @Column(nullable = false)
+    private int token;
 }
