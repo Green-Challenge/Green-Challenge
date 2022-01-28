@@ -8,23 +8,20 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class MovementLog {
+public class DonationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long movementId;
+    private Long donationLogId;
 
     @ManyToOne
-    @JoinColumn(name = "User")
-    private User userId;
+    @JoinColumn(name = "TreeInstanceId")
+    private TreeInstance treeInstanceId;
 
-    @Column(nullable = false)
-    private int distance;
-
-    @Column(nullable = false)
-    private String transportation;
+    @ManyToOne
+    @JoinColumn(name = "Participant")
+    private Participant participantId;
 
     @Column(nullable = false)
     @CreatedDate
-    private LocalDate day;
-
+    private LocalDate donationDate;
 }

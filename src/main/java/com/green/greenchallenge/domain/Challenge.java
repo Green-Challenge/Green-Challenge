@@ -10,15 +10,26 @@ import java.time.LocalDate;
 public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "challenge_id", nullable = false)
     private Long challengeId;
 
+    @Column(nullable = false)
     private String challengeName;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private String challengeImg;
+    @Column(nullable = false)
     private String hashTag;
+    @Column(nullable = false)
     private String transportation;
-    private int goal;
+    @Column(nullable = false)
+    private int goalLeaves;
+    @Column(nullable = false)
     private LocalDate startDate;
+    @Column(nullable = false)
     private LocalDate finishDate;
+    @Column(nullable = false)
+    private int rewardToken;
+    @Column(nullable = false)
+    private double goalDistance;
 }
