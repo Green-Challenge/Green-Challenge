@@ -1,6 +1,7 @@
 package com.green.greenchallenge.domain;
 
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,5 +21,15 @@ public class Participant {
     @ManyToOne
     @JoinColumn(name = "Challenge")
     private Challenge challengeId;
+
+    @Column(nullable = false)
     private LocalDate participateDate;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int leafCount;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private double totalDistance;
 }
