@@ -11,7 +11,6 @@ import java.time.LocalDate;
 public class DonationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long donationLogId;
 
     @ManyToOne

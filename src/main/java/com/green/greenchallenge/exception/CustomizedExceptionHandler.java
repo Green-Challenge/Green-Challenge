@@ -12,8 +12,8 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
-        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+//        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
+//    }
 }

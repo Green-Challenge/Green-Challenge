@@ -13,14 +13,14 @@ import java.time.LocalDate;
 public class TreeInstance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column
     private Long treeInstanceId;
 
     @ManyToOne
     @JoinColumn(name = "Challenge")
     private Challenge challengeId;
 
-    @Column(nullable = false)
+    @Column
     @ColumnDefault("0")
     private int numberOfLeaf;
 

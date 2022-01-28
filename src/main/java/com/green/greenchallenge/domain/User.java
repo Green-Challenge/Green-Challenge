@@ -21,7 +21,6 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "email", unique = true, nullable = false)
@@ -40,10 +39,11 @@ public class User {
     @Column(nullable = false)
     private LocalDate createDate;
 
-    @Column(nullable = false)
-    private String roles;
+    @Column
+    @ColumnDefault("'ROLE_USER'")
+    private String role;
 
-    @Column(nullable = false)
+    @Column
     @ColumnDefault("0")
     private int token;
 }

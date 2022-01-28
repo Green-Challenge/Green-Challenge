@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long participantId;
 
     @ManyToOne

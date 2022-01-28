@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 public class MovementLog {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movementId;
 
     @ManyToOne

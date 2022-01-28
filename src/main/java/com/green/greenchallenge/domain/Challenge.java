@@ -10,7 +10,6 @@ import java.time.LocalDate;
 public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long challengeId;
 
     @Column(nullable = false)
