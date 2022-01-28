@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,7 @@ public class User {
     private String password;
     @Column(nullable = false)
     private String name;
+
     private String nickName;
     private String siNm; // 거주지_시
     private String sggNm; // 거주지_구
@@ -36,8 +39,11 @@ public class User {
     @CreatedDate
     @Column(nullable = false)
     private LocalDate createDate;
+
     @Column(nullable = false)
     private String roles;
+
     @Column(nullable = false)
+    @ColumnDefault("0")
     private int token;
 }
