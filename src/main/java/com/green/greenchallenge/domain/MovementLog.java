@@ -14,10 +14,11 @@ public class MovementLog {
     @ManyToOne
     @JoinColumn(name = "User")
     private User userId;
-
+    @Column(nullable = false)
     private int distance;
-
+    @Column(nullable = false)
     private String transportation;
+    @Column(nullable = false)
+    private LocalDate day;
 
-    private LocalDate date;
 }
