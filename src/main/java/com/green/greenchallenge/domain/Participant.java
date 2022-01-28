@@ -2,12 +2,14 @@ package com.green.greenchallenge.domain;
 
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
 @Entity
+@DynamicInsert
 public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
