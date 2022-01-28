@@ -1,7 +1,6 @@
 package com.green.greenchallenge.domain;
 
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
