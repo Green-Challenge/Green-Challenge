@@ -11,8 +11,16 @@ public class Tree {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long treeId;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "challenge")
     private Challenge challengeId;
+
+    @Column(nullable = false)
     private String treeName;
+
+    @Column(nullable = false)
     private String treeImg;
+
+    @Column(nullable = false)
+    private int treeGrowth;
 }
