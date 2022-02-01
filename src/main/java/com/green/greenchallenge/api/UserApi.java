@@ -4,6 +4,8 @@ import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.AuthService;
 import com.green.greenchallenge.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +48,22 @@ public class UserApi {
         return new ResponseEntity(userService.updateProfile(userDTO), HttpStatus.OK);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/signin")
     public ResponseEntity login(@RequestBody UserDTO userDTO, HttpServletResponse httpServletResponse) {
         String token = authService.login(userDTO);
         httpServletResponse.setHeader("X-AUTH-TOKEN", token);
         return new ResponseEntity("login succes", HttpStatus.OK);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header"
+            )
+    })
+    @GetMapping("/auth/me")
+    public ResponseEntity checkToken() {
+        return new ResponseEntity("success", HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.green.greenchallenge.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,8 @@ public class User implements UserDetails {
 
     @Column(name = "email", unique = true)
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String name;
     private String nickName;
