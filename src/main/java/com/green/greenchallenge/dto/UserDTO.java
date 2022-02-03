@@ -28,6 +28,7 @@ public class UserDTO {
     private String profileImg; // 이미지 링크
     private List<String> roles = Collections.singletonList("ROLE_USER");
     private LocalDate createDate = LocalDate.now();
+    private int token;
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
