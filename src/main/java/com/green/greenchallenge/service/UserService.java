@@ -30,6 +30,7 @@ public class UserService {
         userRepository.save(userDTO.toEntity());
 
         User user = userRepository.findByEmail(userDTO.getEmail());
+
         return UserDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
