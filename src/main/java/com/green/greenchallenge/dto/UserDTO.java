@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Builder
@@ -24,6 +26,7 @@ public class UserDTO {
     private String siNm; // 거주지_시
     private String sggNm; // 거주지_구
     private String profileImg; // 이미지 링크
+    private List<String> roles = Collections.singletonList("ROLE_USER");
     private LocalDate createDate = LocalDate.now();
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
@@ -40,6 +43,7 @@ public class UserDTO {
                 .siNm(this.siNm)
                 .sggNm(this.sggNm)
                 .createDate(this.createDate)
+                .roles(this.roles)
                 .build();
     }
 }
