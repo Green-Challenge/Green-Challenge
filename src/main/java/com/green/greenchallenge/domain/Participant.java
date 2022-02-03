@@ -20,7 +20,7 @@ public class Participant {
     private User userId;
 
     @ManyToOne
-    @JoinColumn(name = "Challenge")
+    @JoinColumn(name = "challengeId")
     private Challenge challengeId;
 
     @Column(nullable = false)
