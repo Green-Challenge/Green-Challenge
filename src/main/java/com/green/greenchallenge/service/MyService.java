@@ -37,4 +37,19 @@ public class MyService {
                 .sggNm(findUser.get().getSggNm())
                 .build();
     }
+
+    @Transactional
+    public UserDTO getProfile(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+
+        if(findUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        return UserDTO.builder()
+                .sggNm(findUser.get().getProfileImg())
+                .nickName(findUser.get().getNickName())
+                .siNm(findUser.get().getSiNm())
+                .sggNm(findUser.get().getSggNm())
+                .token(findUser.get().getToken())
+                .build();
+    }
 }

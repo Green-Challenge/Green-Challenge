@@ -22,4 +22,9 @@ public class MyApi {
     public ResponseEntity<UserDTO> updateProfile(@RequestBody UserDTO userDTO) {
         return new ResponseEntity<>(myService.createProfile(userDTO), HttpStatus.OK);
     }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<UserDTO> getProfile(@PathVariable Long userId) {
+        return new ResponseEntity<>(myService.getProfile(userId), HttpStatus.OK);
+    }
 }
