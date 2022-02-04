@@ -14,11 +14,11 @@ public class DonationLog {
     private Long donationLogId;
 
     @ManyToOne
-    @JoinColumn(name = "TreeInstanceId")
+    @JoinColumn(name = "treeInstanceId")
     private TreeInstance treeInstanceId;
 
     @ManyToOne
-    @JoinColumn(name = "Participant")
+    @JoinColumn(name = "participantId")
     private Participant participantId;
 
     @Column(nullable = false)
