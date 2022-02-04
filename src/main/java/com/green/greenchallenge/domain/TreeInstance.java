@@ -17,7 +17,7 @@ public class TreeInstance {
     private Long treeInstanceId;
 
     @ManyToOne
-    @JoinColumn(name = "Challenge")
+    @JoinColumn(name = "challengeId")
     private Challenge challengeId;
 
     @Column
