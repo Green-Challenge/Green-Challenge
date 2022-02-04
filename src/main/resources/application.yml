@@ -1,7 +1,7 @@
 spring:
     datasource:
         driver-class-name: org.mariadb.jdbc.Driver
-        url: jdbc:mariadb://localhost:3306/green_challenge
+        url: jdbc:mariadb://localhost:3306/green_challenge?allowPublicKeyRetrieval=true&useSSL=false
         username: root
         password:
         hikari:
