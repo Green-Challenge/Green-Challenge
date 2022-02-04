@@ -1,8 +1,8 @@
 package com.green.greenchallenge.api;
 
-import com.green.greenchallenge.domain.Participant;
 import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.GetTreeTogetherDTO;
+import com.green.greenchallenge.dto.MovementLogDTO;
 import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.MyService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/my", produces = "application/json; charset=utf8")
