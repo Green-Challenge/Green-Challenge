@@ -12,7 +12,7 @@ public class Tree {
     private long treeId;
 
     @ManyToOne
-    @JoinColumn(name = "challenge")
+    @JoinColumn(name = "challengeId")
     private Challenge challengeId;
 
     @Column(nullable = false)
