@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    List<Participant> findByUserId(Long userId);
+    List<Participant> findByUserId(User user);
     int countByChallengeId(Challenge challenge);
     Participant findByUserIdAndChallengeId(User userId, Challenge challengeId);
 
