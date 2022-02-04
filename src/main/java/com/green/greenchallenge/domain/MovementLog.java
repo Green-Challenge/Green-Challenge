@@ -20,7 +20,7 @@ public class MovementLog {
     private Long movementLogId;
 
     @ManyToOne
-    @JoinColumn(name = "User")
+    @JoinColumn(name = "userId")
     private User userId;
 
     @Column(nullable = false)

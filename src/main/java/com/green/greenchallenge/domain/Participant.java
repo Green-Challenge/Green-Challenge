@@ -16,7 +16,7 @@ public class Participant {
     private Long participantId;
 
     @ManyToOne
-    @JoinColumn(name= "User")
+    @JoinColumn(name= "userId")
     private User userId;
 
     @ManyToOne
