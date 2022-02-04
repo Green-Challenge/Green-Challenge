@@ -1,5 +1,6 @@
 package com.green.greenchallenge.service;
 
+import com.green.greenchallenge.domain.MovementLog;
 import com.green.greenchallenge.domain.User;
 import com.green.greenchallenge.dto.MovementLogDTO;
 import com.green.greenchallenge.dto.UserDTO;
@@ -45,8 +46,9 @@ public class MyService {
     }
 
     @Transactional
-    public List<MovementLogDTO> getChart(UserDTO userDTO) {
-        Optional<MovementLogDTO> logList = movementLogRepository.findByUserId(userDTO.getUserId());
+    public List<MovementLogDTO> getChart(Long userId) {
+        List<MovementLog> logList = movementLogRepository.findByUserId(userId).stream()
+                .map(Optional::orElseThrow).collect(Collectors.toList());
 
         if(logList.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
@@ -55,9 +57,14 @@ public class MyService {
 
     @Transactional
     public MovementLogDTO insertLog(MovementLogDTO movementLogDTO) {
-        movementLogRepository.save(movementLogDTO.toEntity());
+        User findUser = userRepository.findById(movementLogDTO.getUserId()).orElseThrow();
 
-        return movementLogDTO.toDTO();
+        MovementLog move = movementLogDTO.toEntity();
+        move.setUser(findUser);
+
+        movementLogRepository.save(move);
+
+        return MovementLogDTO.toDTO(move);
     }
 
     @Transactional

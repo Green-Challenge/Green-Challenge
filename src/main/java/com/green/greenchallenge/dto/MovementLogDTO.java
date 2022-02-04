@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovementLogDTO {
-    private User userId;
+    private Long userId;
     private Long movementLogId;
     private LocalDate day = LocalDate.now();
     private String logdate;
@@ -25,7 +25,6 @@ public class MovementLogDTO {
 
     public MovementLog toEntity() {
         return MovementLog.builder()
-                .userId(userId)
                 .movementLogId(movementLogId)
                 .day(day)
                 .distance(distance)
@@ -33,11 +32,11 @@ public class MovementLogDTO {
                 .build();
     }
 
-    public MovementLogDTO toDTO() {
+    public static MovementLogDTO toDTO(MovementLog movementLog) {
         return MovementLogDTO.builder()
-                .logdate(day.toString())
-                .distance(distance)
-                .transportation(transportation)
+                .logdate(movementLog.getDay().toString())
+                .distance(movementLog.getDistance())
+                .transportation(movementLog.getTransportation())
                 .build();
     }
 

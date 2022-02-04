@@ -26,9 +26,9 @@ public class MyApi {
         return new ResponseEntity<>(myService.createProfile(userDTO), HttpStatus.OK);
     }
 
-    @PostMapping("/chart/{userId}")
-    public ResponseEntity<List<MovementLogDTO>> getChart(@PathVariable("userId") UserDTO userDTO) {
-        return new ResponseEntity<>(myService.getChart(userDTO), HttpStatus.OK);
+    @GetMapping("/chart/{userId}")
+    public ResponseEntity<List<MovementLogDTO>> getChart(@PathVariable Long userId) {
+        return new ResponseEntity<>(myService.getChart(userId), HttpStatus.OK);
     }
 
     @PostMapping("/chart")

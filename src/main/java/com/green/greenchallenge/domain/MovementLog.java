@@ -21,7 +21,7 @@ public class MovementLog {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    private User userId;
+    private User user;
 
     @Column(nullable = false)
     private Double distance;
