@@ -21,7 +21,7 @@ public class ChallengeApi {
         return new ResponseEntity(challengeService.getChallenge(challengeId), HttpStatus.OK);//참여자수 처리 필요
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity joinChallenge(@RequestBody ChallengeJoinRequestDTO challengeJoinRequestDTO){
         participantService.createParticipant(challengeJoinRequestDTO);
         return new ResponseEntity(HttpStatus.CREATED);

@@ -34,14 +34,11 @@ public class ParticipantService {
     @Transactional
     public void createParticipant(ChallengeJoinRequestDTO challengeJoinRequestDTO){
 
-        System.out.println("service의 createParticipant 진입");
         Optional<User> getUser = userRepository.findById(challengeJoinRequestDTO.getUserId());
         User user = getUser.get();
-        System.out.println("유저 정보 확인");
 
         Optional<Challenge> getChallenge = challengeRepository.findById(challengeJoinRequestDTO.getChallengeId());
         Challenge challenge = getChallenge.get();
-        System.out.println("챌린지 정보 확인");
 
         Participant checkedParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
         if(checkedParticipant != null) throw new CustomException(ErrorCode.PARTICIPANT_EXIT);
