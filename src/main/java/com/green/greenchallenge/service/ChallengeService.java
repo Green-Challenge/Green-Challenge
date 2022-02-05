@@ -1,7 +1,7 @@
 package com.green.greenchallenge.service;
 
-import com.green.greenchallenge.domain.Challenge;
-import com.green.greenchallenge.domain.Tree;
+import com.green.greenchallenge.domain.*;
+import com.green.greenchallenge.dto.AddRecordDTO;
 import com.green.greenchallenge.dto.ChallengeDTO;
 import com.green.greenchallenge.dto.ChallengeResponseDTO;
 import com.green.greenchallenge.exception.CustomException;
@@ -12,6 +12,7 @@ import org.h2.index.TreeIndex;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -23,6 +24,7 @@ public class ChallengeService {
     private final ParticipantRepository participantRepository;
     private final TreeRepository treeRepository;
     private final TreeInstanceRepository treeInstanceRepository;
+    private final MovementLogRepository movementLogRepository;
 
     @Transactional
     public ChallengeResponseDTO getChallenge(long challengeId) {
@@ -34,8 +36,8 @@ public class ChallengeService {
 
         List<Tree> treeList = treeRepository.findByChallengeId(challenge);
         HashMap<Long, Integer> sameTree = new HashMap<>();
-        for(Tree tree : treeList){
-            sameTree.put(tree.getTreeId(),tree.getTreeGrowth());
+        for (Tree tree : treeList) {
+            sameTree.put(tree.getTreeId(), tree.getTreeGrowth());
         }
         Long maxTreeId = Collections.max(sameTree.entrySet(), Map.Entry.comparingByValue()).getKey();
         System.out.println(maxTreeId);
@@ -51,4 +53,34 @@ public class ChallengeService {
                 .build();
     }
 
+    @Transactional
+    public void addRecord(AddRecordDTO addRecordDTO) {
+
+        Participant participant = participantRepository.findByUserIdAndChallengeId(
+                User.builder().userId(addRecordDTO.getUserId()).build(),
+                Challenge.builder().challengeId(addRecordDTO.getChallengeId()).build());
+
+        double challengeGoalDistance = challengeRepository.findById(addRecordDTO.getChallengeId()).get().getGoalDistance();
+
+        participant.setLeafCount( // 목표 이동거리를 넘겼을 경우 남은 나뭇잎 수를 증가시킴
+                participant.getLeafCount() +
+                        (
+                                ((int) ((participant.getTotalDistance() + addRecordDTO.getAchieved()) / challengeGoalDistance)) -
+                                        ((int) (participant.getTotalDistance() / challengeGoalDistance))
+                        )
+        );
+
+        participant.setTotalDistance(participant.getTotalDistance() + addRecordDTO.getAchieved());
+
+        participantRepository.save(participant);
+
+        movementLogRepository.save(
+                MovementLog.builder()
+                        .user(User.builder().userId(addRecordDTO.getUserId()).build())
+                        .distance(addRecordDTO.getAchieved())
+                        .day(LocalDate.now())
+                        .transportation(challengeRepository.findById(addRecordDTO.getChallengeId()).get().getTransportation())
+                        .build()
+        );
+    }
 }
