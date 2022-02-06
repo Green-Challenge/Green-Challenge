@@ -33,4 +33,9 @@ public class ChallengeApi {
         return new ResponseEntity(challengeService.getUserChallengeList(userId), HttpStatus.OK);
     }
 
+    @GetMapping("/short/{userId}")
+    public ResponseEntity shortChallenge (@PathVariable Long userId){
+        return new ResponseEntity(challengeService.getShortChallenge(userId), HttpStatus.OK);
+    }
+
 }
