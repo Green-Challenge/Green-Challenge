@@ -1,6 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.dto.ChallengeJoinRequestDTO;
+import com.green.greenchallenge.dto.ChallengeListResponseDTO;
 import com.green.greenchallenge.dto.ChallengeResponseDTO;
 import com.green.greenchallenge.service.ChallengeService;
 import com.green.greenchallenge.service.ParticipantService;
@@ -25,6 +26,11 @@ public class ChallengeApi {
     public ResponseEntity joinChallenge(@RequestBody ChallengeJoinRequestDTO challengeJoinRequestDTO){
         participantService.createParticipant(challengeJoinRequestDTO);
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/list/{userId}")
+    public ResponseEntity<ChallengeListResponseDTO> getUserChallengeList(@PathVariable Long userId){
+        return new ResponseEntity(challengeService.getUserChallengeList(userId), HttpStatus.OK);
     }
 
 }
