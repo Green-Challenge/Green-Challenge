@@ -78,7 +78,7 @@ public class ChallengeService {
             if( challengeParticipant != null ){
                 challengeListResponseDTO.setParticipating(true);
                 List<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeId(challenge);
-                if(participantRepository.findByUserId(user) != null){
+                if(treeInstance != null){
                     challengeListResponseDTO.setPercent(
                             Double.valueOf(treeInstance.get(treeInstance.size()-1).getNumberOfLeaf()));
                 }
