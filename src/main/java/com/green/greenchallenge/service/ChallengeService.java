@@ -2,21 +2,19 @@ package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
 import com.green.greenchallenge.dto.AddRecordDTO;
-import com.green.greenchallenge.dto.ChallengeDTO;
 import com.green.greenchallenge.dto.ChallengeListResponseDTO;
 import com.green.greenchallenge.dto.ChallengeResponseDTO;
-import com.green.greenchallenge.dto.ChallengeShortDTO;
+
+import com.green.greenchallenge.dto.*;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.h2.index.TreeIndex;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -114,7 +112,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeShortDTO getShortChallenge(Long userId){
+    public ChallengeShortResponseDTO getShortChallenge(Long userId){
         Optional<User> getUser = userRepository.findById(userId);
         User user = getUser.get();
         Long days = ChronoUnit.DAYS.between(user.getCreateDate(), LocalDate.now());
@@ -138,7 +136,7 @@ public class ChallengeService {
             }
         }
 
-        ChallengeShortDTO challengeShortDTO = ChallengeShortDTO.builder()
+        ChallengeShortResponseDTO challengeShortDTO = ChallengeShortResponseDTO.builder()
                 .dayOfChallenge(Math.toIntExact(days))
                 .amountOfTree(userPlantedTree)
                 .build();
@@ -176,4 +174,36 @@ public class ChallengeService {
                         .build()
         );
     }
+    @Transactional
+    public ChallengeDetailResponseDTO getChallengeDetail(ChallengeDetailRequestDTO challengeDetailRequestDTO){
+
+        User getUser = userRepository.findById(Long.valueOf(challengeDetailRequestDTO.getUserId())).get();
+        Challenge getChallenge = challengeRepository.findById(Long.valueOf(challengeDetailRequestDTO.getChallengeId())).get();
+
+        Participant getParticipant = participantRepository.findByUserIdAndChallengeId(getUser, getChallenge);
+
+        List<DonationLog> userDonationList = donationLogRepository.findByParticipantId(getParticipant);
+        Double userGotLeaf =0.0;
+        Double userLeftLeaf =0.0;
+        if(userDonationList != null){
+            userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
+            userLeftLeaf = userGotLeaf - userDonationList.size();
+        } else {
+            userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
+            userLeftLeaf = userGotLeaf;
+        }
+
+        if(getParticipant.getLeafCount() == userLeftLeaf.intValue()){
+            ChallengeDetailResponseDTO challengeDetailResponseDTO = ChallengeDetailResponseDTO.builder()
+                    .current(getParticipant.getTotalDistance()/getChallenge.getGoalDistance())
+                    .goalDistance(getChallenge.getGoalDistance())
+                    .leafCount(userLeftLeaf.intValue())
+                    .build();
+            return challengeDetailResponseDTO;
+        } else {
+            throw new CustomException(ErrorCode.LEAFCOUNT_ERROR);
+        }
+
+    }
+
 }
