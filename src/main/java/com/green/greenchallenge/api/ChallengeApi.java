@@ -1,5 +1,6 @@
 package com.green.greenchallenge.api;
 
+import com.green.greenchallenge.dto.AddRecordDTO;
 import com.green.greenchallenge.dto.ChallengeJoinRequestDTO;
 import com.green.greenchallenge.dto.ChallengeResponseDTO;
 import com.green.greenchallenge.service.ChallengeService;
@@ -25,6 +26,11 @@ public class ChallengeApi {
     public ResponseEntity joinChallenge(@RequestBody ChallengeJoinRequestDTO challengeJoinRequestDTO){
         participantService.createParticipant(challengeJoinRequestDTO);
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/challenging/done")
+    public void addRecord(@RequestBody AddRecordDTO addRecordDTO) {
+        challengeService.addRecord(addRecordDTO);
     }
 
 }
