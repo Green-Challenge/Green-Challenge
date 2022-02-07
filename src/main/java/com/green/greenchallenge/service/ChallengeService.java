@@ -1,22 +1,16 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
-import com.green.greenchallenge.dto.AddRecordDTO;
-import com.green.greenchallenge.dto.ChallengeDTO;
-import com.green.greenchallenge.dto.ChallengeListResponseDTO;
-import com.green.greenchallenge.dto.ChallengeResponseDTO;
-import com.green.greenchallenge.dto.ChallengeShortDTO;
+import com.green.greenchallenge.dto.*;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.h2.index.TreeIndex;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -42,8 +36,8 @@ public class ChallengeService {
 
         List<Tree> treeList = treeRepository.findByChallengeId(challenge);
         HashMap<Long, Integer> sameTree = new HashMap<>();
-        for(Tree tree : treeList){
-            sameTree.put(tree.getTreeId(),tree.getTreeGrowth());
+        for (Tree tree : treeList) {
+            sameTree.put(tree.getTreeId(), tree.getTreeGrowth());
         }
         Long maxTreeId = Collections.max(sameTree.entrySet(), Map.Entry.comparingByValue()).getKey();
         System.out.println(maxTreeId);
@@ -60,7 +54,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public List<ChallengeListResponseDTO> getUserChallengeList(Long userId){
+    public List<ChallengeListResponseDTO> getUserChallengeList(Long userId) {
 
         Optional<User> getUser = userRepository.findById(userId);
         User user = getUser.get();
@@ -70,26 +64,26 @@ public class ChallengeService {
         List<Challenge> challengeList = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "challengeId"));
         List<ChallengeListResponseDTO> userChallengeList = new ArrayList<>();
 
-        for(Challenge challenge : challengeList){
+        for (Challenge challenge : challengeList) {
             ChallengeListResponseDTO challengeListResponseDTO =
-            ChallengeListResponseDTO.builder()
-                    .challengeId(Math.toIntExact(challenge.getChallengeId()))
-                    .challengeName(challenge.getChallengeName())
-                    .treeId(Integer.parseInt(getChallenge(challenge.getChallengeId()).getTreeId()))
-                    .percent(0.0)
-                    .rewordToken(challenge.getRewardToken())
-                    .numberOfChallengers(participantRepository.countByChallengeId(challenge))
-                    .isComplete(false)
-                    .isParticipating(false)
-                    .build();
+                    ChallengeListResponseDTO.builder()
+                            .challengeId(Math.toIntExact(challenge.getChallengeId()))
+                            .challengeName(challenge.getChallengeName())
+                            .treeId(Integer.parseInt(getChallenge(challenge.getChallengeId()).getTreeId()))
+                            .percent(0.0)
+                            .rewordToken(challenge.getRewardToken())
+                            .numberOfChallengers(participantRepository.countByChallengeId(challenge))
+                            .isComplete(false)
+                            .isParticipating(false)
+                            .build();
 
             Participant challengeParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
-            if( challengeParticipant != null ){
+            if (challengeParticipant != null) {
                 challengeListResponseDTO.setParticipating(true);
                 List<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeId(challenge);
-                if(treeInstance != null){
+                if (treeInstance != null) {
                     challengeListResponseDTO.setPercent(
-                            Double.valueOf(treeInstance.get(treeInstance.size()-1).getNumberOfLeaf()));
+                            Double.valueOf(treeInstance.get(treeInstance.size() - 1).getNumberOfLeaf()));
                 }
                 sortChallengeResponseDTO.put(challengeParticipant.getParticipateDate(), challengeListResponseDTO);
             } else {
@@ -102,11 +96,11 @@ public class ChallengeService {
         List<Long> unParticipateDatekeyList = new ArrayList(unParticipateChallengeResponseDTO.keySet());
         unParticipateDatekeyList.sort(Long::compareTo);
 
-        for (LocalDate localdate : participateDatekeyList){
+        for (LocalDate localdate : participateDatekeyList) {
             userChallengeList.add(sortChallengeResponseDTO.get(localdate));
         }
 
-        for (Long challengeId : unParticipateDatekeyList){
+        for (Long challengeId : unParticipateDatekeyList) {
             userChallengeList.add(unParticipateChallengeResponseDTO.get(challengeId));
         }
 
@@ -114,7 +108,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeShortDTO getShortChallenge(Long userId){
+    public ChallengeShortDTO getShortChallenge(Long userId) {
         Optional<User> getUser = userRepository.findById(userId);
         User user = getUser.get();
         Long days = ChronoUnit.DAYS.between(user.getCreateDate(), LocalDate.now());
@@ -123,15 +117,15 @@ public class ChallengeService {
         int userPlantedTree = 0;
         HashSet<TreeInstance> userPlantedTreeInstance = new HashSet<>();
 
-        for(Participant participant : userParticipant){
+        for (Participant participant : userParticipant) {
             List<DonationLog> userDonationList = donationLogRepository.findByParticipantId(participant);
-            for(DonationLog userDonationlog : userDonationList){
+            for (DonationLog userDonationlog : userDonationList) {
                 Optional<TreeInstance> userDonatedTree = treeInstanceRepository.findById(userDonationlog.getTreeInstanceId().getTreeInstanceId());
-                if(!userPlantedTreeInstance.contains(userDonatedTree)){
+                if (!userPlantedTreeInstance.contains(userDonatedTree)) {
                     userPlantedTreeInstance.add(userDonatedTree.get());
                 }
-                for(TreeInstance treeInstance : userPlantedTreeInstance){
-                    if(treeInstance.getFinishedDate() != null){
+                for (TreeInstance treeInstance : userPlantedTreeInstance) {
+                    if (treeInstance.getFinishedDate() != null) {
                         userPlantedTree++;
                     }
                 }
@@ -175,5 +169,30 @@ public class ChallengeService {
                         .transportation(challengeRepository.findById(addRecordDTO.getChallengeId()).get().getTransportation())
                         .build()
         );
+    }
+
+    @Transactional
+    public ChallengeTreeGrowthDTO getChallengeTreeGrowth(Long challengeId) {
+        Optional<Challenge> challenge = challengeRepository.findById(challengeId);
+        List<TreeInstance> treeInstances = treeInstanceRepository.findByChallengeId(challenge.get());
+        ChallengeTreeGrowthDTO challengeTreeGrowthDTO = new ChallengeTreeGrowthDTO();
+        for (TreeInstance treeInstance : treeInstances) {
+            if (treeInstance.getFinishedDate() == null) {
+                challengeTreeGrowthDTO.setNumberOfLeaf(treeInstance.getNumberOfLeaf());
+                if(treeInstance.getNumberOfLeaf() < challenge.get().getGoalLeaves() / 3) {
+                    challengeTreeGrowthDTO.setTreeGrowth(1);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 1).getTreeId());
+                } else if (treeInstance.getNumberOfLeaf() < challenge.get().getGoalLeaves() * 2 / 3) {
+                    challengeTreeGrowthDTO.setTreeGrowth(2);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 2).getTreeId());
+                } else {
+                    challengeTreeGrowthDTO.setTreeGrowth(3);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 3).getTreeId());
+                }
+                break;
+            }
+        }
+
+        return challengeTreeGrowthDTO;
     }
 }
