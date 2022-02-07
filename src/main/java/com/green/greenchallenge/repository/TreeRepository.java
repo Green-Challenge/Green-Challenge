@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface TreeRepository extends JpaRepository<Tree, Long> {
     List<Tree> findByChallengeId(Challenge challenge);
+
+    Tree findByChallengeIdAndTreeGrowth(Challenge challenge, int treeGrowth);
 }

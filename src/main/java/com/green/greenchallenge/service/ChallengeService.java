@@ -206,4 +206,28 @@ public class ChallengeService {
 
     }
 
+    @Transactional
+    public ChallengeTreeGrowthDTO getChallengeTreeGrowth(Long challengeId) {
+        Optional<Challenge> challenge = challengeRepository.findById(challengeId);
+        List<TreeInstance> treeInstances = treeInstanceRepository.findByChallengeId(challenge.get());
+        ChallengeTreeGrowthDTO challengeTreeGrowthDTO = new ChallengeTreeGrowthDTO();
+        for (TreeInstance treeInstance : treeInstances) {
+            if (treeInstance.getFinishedDate() == null) {
+                challengeTreeGrowthDTO.setNumberOfLeaf(treeInstance.getNumberOfLeaf());
+                if(treeInstance.getNumberOfLeaf() < challenge.get().getGoalLeaves() / 3) {
+                    challengeTreeGrowthDTO.setTreeGrowth(1);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 1).getTreeId());
+                } else if (treeInstance.getNumberOfLeaf() < challenge.get().getGoalLeaves() * 2 / 3) {
+                    challengeTreeGrowthDTO.setTreeGrowth(2);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 2).getTreeId());
+                } else {
+                    challengeTreeGrowthDTO.setTreeGrowth(3);
+                    challengeTreeGrowthDTO.setTreeId(treeRepository.findByChallengeIdAndTreeGrowth(challenge.get(), 3).getTreeId());
+                }
+                break;
+            }
+        }
+
+        return challengeTreeGrowthDTO;
+    }
 }
