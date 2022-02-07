@@ -10,6 +10,7 @@ import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.origin.SystemEnvironmentOrigin;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -229,5 +231,24 @@ public class ChallengeService {
         }
 
         return challengeTreeGrowthDTO;
+    }
+
+    @Transactional
+    public TodayRecordDTO getTodayRecord(TodayRecordDTO todayRecordDTO) {
+        List<MovementLog> movementLogs = movementLogRepository.findByUserId(todayRecordDTO.getUserId())
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+        String transportation = challengeRepository.findById(todayRecordDTO.getChallengeId()).get().getTransportation();
+
+        for(MovementLog movementLog : movementLogs) {
+            if(movementLog.getTransportation().equals(transportation) && movementLog.getDay().equals(LocalDate.now())) {
+                todayRecordDTO.setDistance(todayRecordDTO.getDistance() + movementLog.getDistance());
+            }
+        }
+        todayRecordDTO.setReducedCarbon(Transportation.valueOf(transportation.toUpperCase(Locale.ROOT)).getCost() * todayRecordDTO.getDistance());
+
+        return TodayRecordDTO.builder()
+                .distance(todayRecordDTO.getDistance())
+                .reducedCarbon(todayRecordDTO.getReducedCarbon())
+                .build();
     }
 }
