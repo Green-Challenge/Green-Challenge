@@ -1,10 +1,6 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
-import com.green.greenchallenge.dto.AddRecordDTO;
-import com.green.greenchallenge.dto.ChallengeListResponseDTO;
-import com.green.greenchallenge.dto.ChallengeResponseDTO;
-
 import com.green.greenchallenge.dto.*;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
@@ -15,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,29 +67,31 @@ public class ChallengeService {
         List<ChallengeListResponseDTO> userChallengeList = new ArrayList<>();
 
         for(Challenge challenge : challengeList){
-            ChallengeListResponseDTO challengeListResponseDTO =
-            ChallengeListResponseDTO.builder()
-                    .challengeId(Math.toIntExact(challenge.getChallengeId()))
-                    .challengeName(challenge.getChallengeName())
-                    .treeId(Integer.parseInt(getChallenge(challenge.getChallengeId()).getTreeId()))
-                    .percent(0.0)
-                    .rewordToken(challenge.getRewardToken())
-                    .numberOfChallengers(participantRepository.countByChallengeId(challenge))
-                    .isComplete(false)
-                    .isParticipating(false)
-                    .build();
+            if(challenge.getFinishDate().isAfter(LocalDate.now())){
+                ChallengeListResponseDTO challengeListResponseDTO =
+                        ChallengeListResponseDTO.builder()
+                                .challengeId(Math.toIntExact(challenge.getChallengeId()))
+                                .challengeName(challenge.getChallengeName())
+                                .treeId(Integer.parseInt(getChallenge(challenge.getChallengeId()).getTreeId()))
+                                .percent(0.0)
+                                .rewordToken(challenge.getRewardToken())
+                                .numberOfChallengers(participantRepository.countByChallengeId(challenge))
+                                .isComplete(false)
+                                .isParticipating(false)
+                                .build();
 
-            Participant challengeParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
-            if( challengeParticipant != null ){
-                challengeListResponseDTO.setParticipating(true);
-                List<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeId(challenge);
-                if(treeInstance != null){
-                    challengeListResponseDTO.setPercent(
-                            Double.valueOf(treeInstance.get(treeInstance.size()-1).getNumberOfLeaf()));
+                Participant challengeParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
+                if( challengeParticipant != null ){
+                    challengeListResponseDTO.setParticipating(true);
+                    List<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeId(challenge);
+                    if(treeInstance != null){
+                        challengeListResponseDTO.setPercent(
+                                Double.valueOf(treeInstance.get(treeInstance.size()-1).getNumberOfLeaf()));
+                    }
+                    sortChallengeResponseDTO.put(challengeParticipant.getParticipateDate(), challengeListResponseDTO);
+                } else {
+                    unParticipateChallengeResponseDTO.put(challenge.getChallengeId(), challengeListResponseDTO);
                 }
-                sortChallengeResponseDTO.put(challengeParticipant.getParticipateDate(), challengeListResponseDTO);
-            } else {
-                unParticipateChallengeResponseDTO.put(challenge.getChallengeId(), challengeListResponseDTO);
             }
         }
 
@@ -229,5 +229,54 @@ public class ChallengeService {
         }
 
         return challengeTreeGrowthDTO;
+    }
+    @Transactional
+    public List<ChallengeChartResponseDTO> getChallengeChart(ChallengeChartRequestDTO challengeChartRequestDTO){
+        User user = userRepository.findById(challengeChartRequestDTO.getUserId()).orElseThrow();
+        Challenge challenge = challengeRepository.findById(challengeChartRequestDTO.getChallengeId()).orElseThrow();
+        String trans = challenge.getTransportation();
+
+        LocalDate start = LocalDate.now().withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
+
+        List<MovementLog> nowMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start, end, trans, user)
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+        List<MovementLog> lastMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start.minusMonths(1), start, trans, user)
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+
+        List<ChallengeChartResponseDTO> list = new ArrayList<>();
+
+        Transportation transportation = Transportation.valueOf(trans);
+
+        list.add(ChallengeChartResponseDTO.builder()
+                .date(start.minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM")))
+                .value(lastMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
+                .build());
+        list.add(ChallengeChartResponseDTO.builder()
+                .date(start.format(DateTimeFormatter.ofPattern("yyyy-MM")))
+                .value(nowMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
+                .build());
+
+        return list;
+    }
+
+
+    @Transactional
+    public TodayRecordDTO getTodayRecord(TodayRecordDTO todayRecordDTO) {
+        List<MovementLog> movementLogs = movementLogRepository.findByUserId(todayRecordDTO.getUserId())
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+        String transportation = challengeRepository.findById(todayRecordDTO.getChallengeId()).get().getTransportation();
+
+        for(MovementLog movementLog : movementLogs) {
+            if(movementLog.getTransportation().equals(transportation) && movementLog.getDay().equals(LocalDate.now())) {
+                todayRecordDTO.setDistance(todayRecordDTO.getDistance() + movementLog.getDistance());
+            }
+        }
+        todayRecordDTO.setReducedCarbon(Transportation.valueOf(transportation.toUpperCase(Locale.ROOT)).getCost() * todayRecordDTO.getDistance());
+
+        return TodayRecordDTO.builder()
+                .distance(todayRecordDTO.getDistance())
+                .reducedCarbon(todayRecordDTO.getReducedCarbon())
+                .build();
     }
 }
