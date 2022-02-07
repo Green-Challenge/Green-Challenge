@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChallengeShortDTO {
-
-    private int dayOfChallenge;
-    private int amountOfTree;
-
+public class AddRecordDTO {
+    private Long challengeId;
+    private Long userId;
+    private double achieved;
 }
