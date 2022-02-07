@@ -5,6 +5,7 @@ import com.green.greenchallenge.dto.AddRecordDTO;
 import com.green.greenchallenge.dto.ChallengeDTO;
 import com.green.greenchallenge.dto.ChallengeListResponseDTO;
 import com.green.greenchallenge.dto.ChallengeResponseDTO;
+import com.green.greenchallenge.dto.ChallengeShortDTO;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
 import com.green.greenchallenge.repository.*;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -27,6 +30,7 @@ public class ChallengeService {
     private final TreeRepository treeRepository;
     private final TreeInstanceRepository treeInstanceRepository;
     private final MovementLogRepository movementLogRepository;
+    private final DonationLogRepository donationLogRepository;
 
     @Transactional
     public ChallengeResponseDTO getChallenge(long challengeId) {
@@ -107,7 +111,39 @@ public class ChallengeService {
         }
 
         return userChallengeList;
+    }
 
+    @Transactional
+    public ChallengeShortDTO getShortChallenge(Long userId){
+        Optional<User> getUser = userRepository.findById(userId);
+        User user = getUser.get();
+        Long days = ChronoUnit.DAYS.between(user.getCreateDate(), LocalDate.now());
+        List<Participant> userParticipant = participantRepository.findByUserId(user);
+
+        int userPlantedTree = 0;
+        HashSet<TreeInstance> userPlantedTreeInstance = new HashSet<>();
+
+        for(Participant participant : userParticipant){
+            List<DonationLog> userDonationList = donationLogRepository.findByParticipantId(participant);
+            for(DonationLog userDonationlog : userDonationList){
+                Optional<TreeInstance> userDonatedTree = treeInstanceRepository.findById(userDonationlog.getTreeInstanceId().getTreeInstanceId());
+                if(!userPlantedTreeInstance.contains(userDonatedTree)){
+                    userPlantedTreeInstance.add(userDonatedTree.get());
+                }
+                for(TreeInstance treeInstance : userPlantedTreeInstance){
+                    if(treeInstance.getFinishedDate() != null){
+                        userPlantedTree++;
+                    }
+                }
+            }
+        }
+
+        ChallengeShortDTO challengeShortDTO = ChallengeShortDTO.builder()
+                .dayOfChallenge(Math.toIntExact(days))
+                .amountOfTree(userPlantedTree)
+                .build();
+
+        return challengeShortDTO;
     }
 
     @Transactional
