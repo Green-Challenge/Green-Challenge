@@ -51,6 +51,11 @@ public class ChallengeApi {
         return new ResponseEntity(challengeService.getChallengeTreeGrowth(challengeId), HttpStatus.OK);
     }
 
+    @PostMapping("/chart")
+    public ResponseEntity getChart(@RequestBody ChallengeChartRequestDTO challengeChartRequestDTO){
+        return new ResponseEntity(challengeService.getChallengeChart(challengeChartRequestDTO), HttpStatus.OK);
+    }
+
     @PostMapping("/challenging/record")
     public ResponseEntity<TodayRecordDTO> getTodayRecord (@RequestBody TodayRecordDTO todayRecordDTO) {
         return new ResponseEntity<TodayRecordDTO>(challengeService.getTodayRecord(todayRecordDTO), HttpStatus.OK);
