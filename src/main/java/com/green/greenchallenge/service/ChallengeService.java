@@ -1,10 +1,6 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
-import com.green.greenchallenge.dto.AddRecordDTO;
-import com.green.greenchallenge.dto.ChallengeListResponseDTO;
-import com.green.greenchallenge.dto.ChallengeResponseDTO;
-
 import com.green.greenchallenge.dto.*;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
@@ -15,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -204,6 +202,36 @@ public class ChallengeService {
             throw new CustomException(ErrorCode.LEAFCOUNT_ERROR);
         }
 
+    }
+
+    @Transactional
+    public List<ChallengeChartResponseDTO> getChallengeChart(ChallengeChartRequestDTO challengeChartRequestDTO){
+        User user = userRepository.findById(challengeChartRequestDTO.getUserId()).orElseThrow();
+        Challenge challenge = challengeRepository.findById(challengeChartRequestDTO.getChallengeId()).orElseThrow();
+        String trans = challenge.getTransportation();
+
+        LocalDate start = LocalDate.now().withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
+
+        List<MovementLog> nowMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start, end, trans, user)
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+        List<MovementLog> lastMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start.minusMonths(1), start, trans, user)
+                .stream().map(Optional::orElseThrow).collect(Collectors.toList());
+
+        List<ChallengeChartResponseDTO> list = new ArrayList<>();
+
+        Transportation transportation = Transportation.valueOf(trans);
+
+        list.add(ChallengeChartResponseDTO.builder()
+                .date(start.minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM")))
+                .value(lastMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
+                .build());
+        list.add(ChallengeChartResponseDTO.builder()
+                .date(start.format(DateTimeFormatter.ofPattern("yyyy-MM")))
+                .value(nowMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
+                .build());
+
+        return list;
     }
 
 }
