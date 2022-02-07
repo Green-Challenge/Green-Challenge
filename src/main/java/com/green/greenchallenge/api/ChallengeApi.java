@@ -1,10 +1,6 @@
 package com.green.greenchallenge.api;
 
-import com.green.greenchallenge.dto.AddRecordDTO;
-import com.green.greenchallenge.dto.ChallengeDetailRequestDTO;
-import com.green.greenchallenge.dto.ChallengeJoinRequestDTO;
-import com.green.greenchallenge.dto.ChallengeListResponseDTO;
-import com.green.greenchallenge.dto.ChallengeResponseDTO;
+import com.green.greenchallenge.dto.*;
 import com.green.greenchallenge.service.ChallengeService;
 import com.green.greenchallenge.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +44,11 @@ public class ChallengeApi {
     @PostMapping("/challenging/detail")
     public ResponseEntity detailChallenge(@RequestBody ChallengeDetailRequestDTO challengeDetailRequestDTO){
         return new ResponseEntity(challengeService.getChallengeDetail(challengeDetailRequestDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/tree/{challengeId}")
+    public ResponseEntity<ChallengeTreeGrowthDTO> getChallengeTreeGrowth (@PathVariable Long challengeId) {
+        return new ResponseEntity(challengeService.getChallengeTreeGrowth(challengeId), HttpStatus.OK);
     }
 
 }
