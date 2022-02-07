@@ -1,21 +1,18 @@
 package com.green.greenchallenge.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChallengeListResponseDTO {
 
-    private Long challengeId;
+    private int challengeId;
     private String challengeName;
-    private Long treeId;
+    private int treeId;
     private Double percent;
     private int rewordToken;
     private int numberOfChallengers;
