@@ -213,9 +213,9 @@ public class ChallengeService {
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now();
 
-        List<MovementLog> nowMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndAndTransportationAndUser(start, end, trans, user)
+        List<MovementLog> nowMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start, end, trans, user)
                 .stream().map(Optional::orElseThrow).collect(Collectors.toList());
-        List<MovementLog> lastMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndAndTransportationAndUser(start.minusMonths(1), start, trans, user)
+        List<MovementLog> lastMonth = movementLogRepository.findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(start.minusMonths(1), start, trans, user)
                 .stream().map(Optional::orElseThrow).collect(Collectors.toList());
 
         List<ChallengeChartResponseDTO> list = new ArrayList<>();
