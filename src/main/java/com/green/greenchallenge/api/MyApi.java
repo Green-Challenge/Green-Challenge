@@ -46,8 +46,6 @@ public class MyApi {
 
     @GetMapping("/trees/{userId}")
     public ResponseEntity<ArrayList<GetTreeTogetherDTO>> getTreeTogether(@PathVariable Long userId) {
-        User user = new User();
-        user.setUserId(userId);
-        return new ResponseEntity<>(myService.getTreeTogether(user), HttpStatus.OK);
+        return new ResponseEntity<>(myService.getTreeTogether(userId), HttpStatus.OK);
     }
 }
