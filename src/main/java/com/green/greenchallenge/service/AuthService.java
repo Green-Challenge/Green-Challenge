@@ -23,7 +23,7 @@ public class AuthService {
         if(loginUser == null) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         if(!passwordEncoder.matches(userDTO.getPassword(), loginUser.getPassword()))
-            throw new CustomException(ErrorCode.UNKNOWN_ERROR);
+            throw new CustomException(ErrorCode.WRONG_PASSWORD);
         return jwtProvider.createToken(String.valueOf(loginUser.getUserId()), userDTO.getRoles());
     }
 }
