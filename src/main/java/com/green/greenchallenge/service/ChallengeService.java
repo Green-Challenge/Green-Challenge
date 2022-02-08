@@ -184,20 +184,16 @@ public class ChallengeService {
 
         List<DonationLog> userDonationList = donationLogRepository.findByParticipantId(getParticipant);
         Double userGotLeaf =0.0;
-        Double userLeftLeaf =0.0;
-        if(userDonationList != null){
-            userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
-            userLeftLeaf = userGotLeaf - userDonationList.size();
-        } else {
-            userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
-            userLeftLeaf = userGotLeaf;
-        }
+        Double userDonatedLeaf =0.0;
+        userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
+        userDonatedLeaf = Double.valueOf(userDonationList.size());
 
-        if(getParticipant.getLeafCount() == userLeftLeaf.intValue()){
+        if(getParticipant.getLeafCount() == userDonatedLeaf.intValue()
+                && getParticipant.getLeafCount() == userGotLeaf.intValue()){
             ChallengeDetailResponseDTO challengeDetailResponseDTO = ChallengeDetailResponseDTO.builder()
                     .current(getParticipant.getTotalDistance()/getChallenge.getGoalDistance())
                     .goalDistance(getChallenge.getGoalDistance())
-                    .leafCount(userLeftLeaf.intValue())
+                    .leafCount(userDonatedLeaf.intValue())
                     .build();
             return challengeDetailResponseDTO;
         } else {
