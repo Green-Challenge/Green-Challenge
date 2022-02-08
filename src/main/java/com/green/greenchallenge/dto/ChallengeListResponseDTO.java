@@ -10,9 +10,9 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChallengeListResponseDTO {
 
-    private int challengeId;
+    private Long challengeId;
     private String challengeName;
-    private int treeId;
+    private Long treeId;
     private Double percent;
     private int rewordToken;
     private int numberOfChallengers;

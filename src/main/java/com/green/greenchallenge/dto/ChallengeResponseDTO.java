@@ -18,7 +18,7 @@ public class ChallengeResponseDTO {
     private int rewardToken;
     private String description;
     private String hashTag;
-    private String treeId;
+    private Long treeId;
     private String challengeImg;
 
 }
