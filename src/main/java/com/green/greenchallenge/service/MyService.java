@@ -89,8 +89,8 @@ public class MyService {
     }
 
     @Transactional
-    public ArrayList<GetTreeTogetherDTO> getTreeTogether(User user) {
-        List<Participant> participantList = participantRepository.findByUserId(user);
+    public ArrayList<GetTreeTogetherDTO> getTreeTogether(Long userId) {
+        List<Participant> participantList = participantRepository.findByUserId(User.builder().userId(userId).build());
         ArrayList<GetTreeTogetherDTO> getTreeTogethers = new ArrayList<>();
 
         if(participantList.isEmpty()) {
