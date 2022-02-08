@@ -11,4 +11,5 @@ import java.util.List;
 public interface DonationLogRepository extends JpaRepository<DonationLog, Long> {
     List<DonationLog> findByParticipantId(Participant participant);
     List<DonationLog> findByTreeInstanceId(TreeInstance treeInstance);
+    List<DonationLog> findByTreeInstanceIdAndParticipantId(TreeInstance treeInstance, Participant participant);
 }
