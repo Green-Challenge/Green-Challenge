@@ -90,35 +90,37 @@ public class MyService {
 
     @Transactional
     public ArrayList<GetTreeTogetherDTO> getTreeTogether(User user) {
-        List<Participant> participants = participantRepository.findByUserId(user);
+        List<Participant> participantList = participantRepository.findByUserId(user);
         ArrayList<GetTreeTogetherDTO> getTreeTogethers = new ArrayList<>();
 
-        if(participants.isEmpty()) {
+        if(participantList.isEmpty()) {
             throw new CustomException(ErrorCode.PARTICIPANT_EMPTY);
         }
 
-        for (int i = 0; i < participants.size(); i++) {
-
+        for(Participant participant : participantList) {
             int numberOfCompletions = 0;
-            List<TreeInstance> instances = treeInstanceRepository.findByChallengeId(participants.get(i).getChallengeId());
-            for(int j = 0; j < instances.size(); j++) {
-                if(instances.get(j).getFinishedDate() != null) {
+            List<TreeInstance> treeInstanceList = treeInstanceRepository.findByChallengeId(participant.getChallengeId());
+
+            for (TreeInstance treeInstance : treeInstanceList) {
+                if(treeInstance.getFinishedDate() != null) {
                     numberOfCompletions++;
+                    // TODO : 사용자가 참여한 인스턴스에 의해서만 numberOfCompletions 를 증가시키기
+
                 }
             }
 
-            if(treeRepository.findByChallengeId(participants.get(i).getChallengeId()).isEmpty()) {
+            if(treeRepository.findByChallengeId(participant.getChallengeId()).isEmpty()) {
                 throw new CustomException(ErrorCode.TREE_EMPTY);
             }
 
-            Long treeId = treeRepository.findByChallengeId(participants.get(i).getChallengeId()).get(0).getTreeId();
+            Long treeId = treeRepository.findByChallengeId(participant.getChallengeId()).get(0).getTreeId();
 
             GetTreeTogetherDTO togetherDTO = new GetTreeTogetherDTO(
-                    participants.get(i).getChallengeId().getChallengeId(),
-                    participants.get(i).getChallengeId().getChallengeName(),
+                    participant.getChallengeId().getChallengeId(),
+                    participant.getChallengeId().getChallengeName(),
                     numberOfCompletions,
                     treeId,
-                    (int)(participants.get(i).getTotalDistance() / participants.get(i).getChallengeId().getGoalDistance())
+                    (int)(participant.getTotalDistance() / participant.getChallengeId().getGoalDistance())
             );
 
             getTreeTogethers.add(togetherDTO);
