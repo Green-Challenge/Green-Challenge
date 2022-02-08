@@ -50,7 +50,7 @@ public class ChallengeService {
                 .rewardToken(challenge.getRewardToken())
                 .description(challenge.getDescription())
                 .hashTag(challenge.getHashTag())
-                .treeId(maxTreeId.toString())
+                .treeId(maxTreeId)
                 .challengeImg(challenge.getChallengeImg())
                 .build();
     }
@@ -70,9 +70,9 @@ public class ChallengeService {
             if(challenge.getFinishDate().isAfter(LocalDate.now())){
                 ChallengeListResponseDTO challengeListResponseDTO =
                         ChallengeListResponseDTO.builder()
-                                .challengeId(Math.toIntExact(challenge.getChallengeId()))
+                                .challengeId(challenge.getChallengeId())
                                 .challengeName(challenge.getChallengeName())
-                                .treeId(Integer.parseInt(getChallenge(challenge.getChallengeId()).getTreeId()))
+                                .treeId(getChallenge(challenge.getChallengeId()).getTreeId())
                                 .percent(0.0)
                                 .rewordToken(challenge.getRewardToken())
                                 .numberOfChallengers(participantRepository.countByChallengeId(challenge))
