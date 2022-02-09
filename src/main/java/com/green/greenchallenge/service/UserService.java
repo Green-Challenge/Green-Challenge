@@ -1,6 +1,7 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.User;
+import com.green.greenchallenge.dto.AuthResponseDTO;
 import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.exception.CustomException;
 import com.green.greenchallenge.exception.ErrorCode;
@@ -20,7 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDTO createUser(UserDTO userDTO) {
+    public AuthResponseDTO createUser(UserDTO userDTO) {
         User checkedUser = userRepository.findByEmail(userDTO.getEmail());
 
         if(checkedUser != null) throw new CustomException(ErrorCode.EMAIL_EXIST);
@@ -31,7 +32,7 @@ public class UserService {
 
         User user = userRepository.findByEmail(userDTO.getEmail());
 
-        return UserDTO.builder()
+        return AuthResponseDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
                 .build();
