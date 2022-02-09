@@ -255,6 +255,11 @@ public class ChallengeService {
     @Transactional
     public ChallengeTreeGrowthDTO getChallengeTreeGrowth(Long challengeId) {
         Optional<Challenge> challenge = challengeRepository.findById(challengeId);
+
+        if(challenge.isEmpty()) {
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        }
+
         List<TreeInstance> treeInstances = treeInstanceRepository.findByChallengeId(challenge.get());
         ChallengeTreeGrowthDTO challengeTreeGrowthDTO = new ChallengeTreeGrowthDTO();
         for (TreeInstance treeInstance : treeInstances) {
