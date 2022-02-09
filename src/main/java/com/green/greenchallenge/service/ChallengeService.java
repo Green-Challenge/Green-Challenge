@@ -147,9 +147,25 @@ public class ChallengeService {
     @Transactional
     public void addRecord(AddRecordDTO addRecordDTO) {
         Optional<Challenge> challenge = challengeRepository.findById(addRecordDTO.getChallengeId());
+        if(challenge.isEmpty()) {
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        }
+
         Optional<User> user = userRepository.findById(addRecordDTO.getUserId());
+        if(user.isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         Participant participant = participantRepository.findByUserIdAndChallengeId(user.get(), challenge.get());
+        if(participant == null) {
+            throw new CustomException(ErrorCode.PARTICIPANT_EMPTY);
+        }
+
         double challengeGoalDistance = challenge.get().getGoalDistance();
+
+        if(addRecordDTO.getAchieved() <= 0) {
+            throw new CustomException(ErrorCode.WRONG_VALUE);
+        }
         int addLeaves =  ((int) ((participant.getTotalDistance() + addRecordDTO.getAchieved()) / challengeGoalDistance)) - ((int) (participant.getTotalDistance() / challengeGoalDistance));
 
         participant.setLeafCount( // 목표 이동거리를 넘겼을 경우 나뭇잎 수를 증가시킴
@@ -255,6 +271,11 @@ public class ChallengeService {
     @Transactional
     public ChallengeTreeGrowthDTO getChallengeTreeGrowth(Long challengeId) {
         Optional<Challenge> challenge = challengeRepository.findById(challengeId);
+
+        if(challenge.isEmpty()) {
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        }
+
         List<TreeInstance> treeInstances = treeInstanceRepository.findByChallengeId(challenge.get());
         ChallengeTreeGrowthDTO challengeTreeGrowthDTO = new ChallengeTreeGrowthDTO();
         for (TreeInstance treeInstance : treeInstances) {
@@ -309,6 +330,13 @@ public class ChallengeService {
 
     @Transactional
     public TodayRecordDTO getTodayRecord(TodayRecordDTO todayRecordDTO) {
+        if(challengeRepository.findById(todayRecordDTO.getChallengeId()).isEmpty()) {
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        }
+        if(userRepository.findById(todayRecordDTO.getUserId()).isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         List<MovementLog> movementLogs = movementLogRepository.findByUserId(todayRecordDTO.getUserId())
                 .stream().map(Optional::orElseThrow).collect(Collectors.toList());
         String transportation = challengeRepository.findById(todayRecordDTO.getChallengeId()).get().getTransportation();
