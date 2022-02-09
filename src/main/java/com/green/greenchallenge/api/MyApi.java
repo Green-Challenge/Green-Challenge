@@ -1,6 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.domain.User;
+import com.green.greenchallenge.dto.GetChartResponseDTO;
 import com.green.greenchallenge.dto.GetTreeTogetherDTO;
 import com.green.greenchallenge.dto.MovementLogDTO;
 import com.green.greenchallenge.dto.UserDTO;
@@ -30,7 +31,7 @@ public class MyApi {
     }
 
     @GetMapping("/chart/{userId}")
-    public ResponseEntity<List<MovementLogDTO>> getChart(@PathVariable Long userId) {
+    public ResponseEntity<GetChartResponseDTO> getChart(@PathVariable Long userId) {
         return new ResponseEntity<>(myService.getChart(userId), HttpStatus.OK);
     }
 

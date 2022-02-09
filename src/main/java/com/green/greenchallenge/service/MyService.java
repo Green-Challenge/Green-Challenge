@@ -1,6 +1,7 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
+import com.green.greenchallenge.dto.GetChartResponseDTO;
 import com.green.greenchallenge.dto.GetTreeTogetherDTO;
 import com.green.greenchallenge.domain.MovementLog;
 import com.green.greenchallenge.domain.User;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,16 +56,31 @@ public class MyService {
     }
 
     @Transactional
-    public List<MovementLogDTO> getChart(Long userId) {
+    public GetChartResponseDTO getChart(Long userId) {
         Optional<User> findUser = userRepository.findById(userId);
         if (findUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        List<MovementLog> logList = movementLogRepository.findByUserId(userId).stream()
-                .map(Optional::orElseThrow).collect(Collectors.toList());
+        LocalDate start = LocalDate.now().withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
 
-        if(logList.isEmpty()) throw new CustomException(ErrorCode.NO_MOVEMENT_LOG);
+        List<MovementLog> nowMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start, end).stream()
+                .map(Optional::orElseThrow)
+                .collect(Collectors.toList());
+        List<MovementLog> lastMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start.minusMonths(1), start.minusDays(1)).stream()
+                .map(Optional::orElseThrow)
+                .collect(Collectors.toList());
 
-        return logList.stream().map(MovementLogDTO::toDTO).collect(Collectors.toList());
+        List<MovementLogDTO> nowMonthDTO = nowMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
+        List<MovementLogDTO> lastMonthDTO = lastMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
+
+        return GetChartResponseDTO.builder()
+                .currentMonth(nowMonthDTO)
+                .lastMonth(lastMonthDTO)
+                .build();
     }
 
     @Transactional

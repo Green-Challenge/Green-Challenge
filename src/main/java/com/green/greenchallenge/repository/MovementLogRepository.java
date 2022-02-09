@@ -16,5 +16,7 @@ public interface MovementLogRepository extends JpaRepository<MovementLog, Long> 
     @Query(value = "select * from movement_log where user_id = :userId", nativeQuery = true)
     List<Optional<MovementLog>> findByUserId(Long userId);
 
+    List<Optional<MovementLog>> findByUserAndDayGreaterThanEqualAndDayLessThanEqual(User userId, LocalDate start, LocalDate end);
+
     List<Optional<MovementLog>> findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(LocalDate start, LocalDate end, String transportation, User user);
 }
