@@ -17,6 +17,7 @@ public enum ErrorCode {
     PARTICIPANT_EMPTY(NOT_FOUND, "참여중인 challenge가 없습니다."),
     TREE_EMPTY(NOT_FOUND, "tree가 배정돼있지 않습니다."),
     LEAFCOUNT_ERROR(CONFLICT, "남아있는 나뭇잎을 불러올 수 없습니다."),
+    NO_MOVEMENT_LOG(NOT_FOUND, "이동 로그가 없습니다."),
     WRONG_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;

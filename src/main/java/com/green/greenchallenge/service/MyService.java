@@ -55,24 +55,15 @@ public class MyService {
 
     @Transactional
     public List<MovementLogDTO> getChart(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+        if (findUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
         List<MovementLog> logList = movementLogRepository.findByUserId(userId).stream()
                 .map(Optional::orElseThrow).collect(Collectors.toList());
 
-        if(logList.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        if(logList.isEmpty()) throw new CustomException(ErrorCode.NO_MOVEMENT_LOG);
 
         return logList.stream().map(MovementLogDTO::toDTO).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public MovementLogDTO insertLog(MovementLogDTO movementLogDTO) {
-        User findUser = userRepository.findById(movementLogDTO.getUserId()).orElseThrow();
-
-        MovementLog move = movementLogDTO.toEntity();
-        move.setUser(findUser);
-
-        movementLogRepository.save(move);
-
-        return MovementLogDTO.toDTO(move);
     }
 
     @Transactional
