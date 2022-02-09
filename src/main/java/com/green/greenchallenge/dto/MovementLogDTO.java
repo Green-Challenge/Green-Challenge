@@ -33,7 +33,6 @@ public class MovementLogDTO {
         return MovementLogDTO.builder()
                 .logdate(movementLog.getDay().toString())
                 .distance(movementLog.getDistance())
-                .transportation(movementLog.getTransportation())
                 .build();
     }
 

@@ -1,5 +1,7 @@
 package com.green.greenchallenge.api;
 
+import com.green.greenchallenge.config.JwtProvider;
+import com.green.greenchallenge.dto.AuthResponseDTO;
 import com.green.greenchallenge.dto.UserDTO;
 import com.green.greenchallenge.service.AuthService;
 import com.green.greenchallenge.service.UserService;
@@ -18,14 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 public class UserApi {
     private final UserService userService;
     private final AuthService authService;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/auth")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<AuthResponseDTO> createUser(@RequestBody UserDTO userDTO) {
         return new ResponseEntity(userService.createUser(userDTO), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/auth/{email}")
-    public ResponseEntity getProfile(@PathVariable String email) {
+    public ResponseEntity<String> getProfile(@PathVariable String email) {
         if(userService.idDuplicated(email))
             return new ResponseEntity("사용가능한 이메일입니다.",HttpStatus.OK);
         else
@@ -33,10 +36,10 @@ public class UserApi {
     }
 
     @PostMapping("/auth/signin")
-    public ResponseEntity login(@RequestBody UserDTO userDTO, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody UserDTO userDTO, HttpServletResponse httpServletResponse) {
         String token = authService.login(userDTO);
         httpServletResponse.setHeader("X-AUTH-TOKEN", token);
-        return new ResponseEntity("login succes", HttpStatus.OK);
+        return new ResponseEntity(AuthResponseDTO.builder().userId(Long.parseLong(jwtProvider.getUserPk(token))).build(), HttpStatus.OK);
     }
 
     @ApiImplicitParams({
@@ -47,7 +50,7 @@ public class UserApi {
             )
     })
     @GetMapping("/auth/me")
-    public ResponseEntity checkToken() {
-        return new ResponseEntity("success", HttpStatus.OK);
+    public ResponseEntity<AuthResponseDTO> checkToken(@RequestHeader(value = "X-AUTH-TOKEN") String token) {
+        return new ResponseEntity(AuthResponseDTO.builder().userId(Long.parseLong(jwtProvider.getUserPk(token))).build(), HttpStatus.OK);
     }
 }
