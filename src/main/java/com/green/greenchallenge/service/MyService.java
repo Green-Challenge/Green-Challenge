@@ -95,6 +95,10 @@ public class MyService {
         List<Participant> participantList = participantRepository.findByUserId(User.builder().userId(userId).build());
         ArrayList<GetTreeTogetherDTO> getTreeTogethers = new ArrayList<>();
 
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         if (participantList.isEmpty()) {
             throw new CustomException(ErrorCode.PARTICIPANT_EMPTY);
         }
@@ -102,7 +106,6 @@ public class MyService {
         for (Participant participant : participantList) {
             int numberOfCompletions = 0;
             int instanceNumberOfLeaf = 0;
-            boolean isFinished = false;
             List<TreeInstance> treeInstanceList = treeInstanceRepository.findByChallengeId(participant.getChallengeId());
 
             for (TreeInstance treeInstance : treeInstanceList) {
