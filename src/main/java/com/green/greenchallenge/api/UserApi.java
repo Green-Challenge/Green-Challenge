@@ -23,12 +23,12 @@ public class UserApi {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/auth")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<AuthResponseDTO> createUser(@RequestBody UserDTO userDTO) {
         return new ResponseEntity(userService.createUser(userDTO), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/auth/{email}")
-    public ResponseEntity getProfile(@PathVariable String email) {
+    public ResponseEntity<String> getProfile(@PathVariable String email) {
         if(userService.idDuplicated(email))
             return new ResponseEntity("사용가능한 이메일입니다.",HttpStatus.OK);
         else
@@ -50,7 +50,7 @@ public class UserApi {
             )
     })
     @GetMapping("/auth/me")
-    public ResponseEntity checkToken(@RequestHeader(value = "X-AUTH-TOKEN") String token) {
+    public ResponseEntity<AuthResponseDTO> checkToken(@RequestHeader(value = "X-AUTH-TOKEN") String token) {
         return new ResponseEntity(AuthResponseDTO.builder().userId(Long.parseLong(jwtProvider.getUserPk(token))).build(), HttpStatus.OK);
     }
 }
