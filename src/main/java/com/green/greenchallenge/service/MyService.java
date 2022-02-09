@@ -84,6 +84,7 @@ public class MyService {
         return UserDTO.builder()
                 .sggNm(findUser.get().getProfileImg())
                 .nickName(findUser.get().getNickName())
+                .profileImg(findUser.get().getProfileImg())
                 .siNm(findUser.get().getSiNm())
                 .sggNm(findUser.get().getSggNm())
                 .token(findUser.get().getToken())
