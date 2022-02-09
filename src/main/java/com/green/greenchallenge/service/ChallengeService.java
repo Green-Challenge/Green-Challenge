@@ -330,6 +330,13 @@ public class ChallengeService {
 
     @Transactional
     public TodayRecordDTO getTodayRecord(TodayRecordDTO todayRecordDTO) {
+        if(challengeRepository.findById(todayRecordDTO.getChallengeId()).isEmpty()) {
+            throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        }
+        if(userRepository.findById(todayRecordDTO.getUserId()).isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         List<MovementLog> movementLogs = movementLogRepository.findByUserId(todayRecordDTO.getUserId())
                 .stream().map(Optional::orElseThrow).collect(Collectors.toList());
         String transportation = challengeRepository.findById(todayRecordDTO.getChallengeId()).get().getTransportation();
