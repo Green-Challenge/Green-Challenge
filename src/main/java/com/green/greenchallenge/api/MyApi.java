@@ -34,11 +34,6 @@ public class MyApi {
         return new ResponseEntity<>(myService.getChart(userId), HttpStatus.OK);
     }
 
-    @PostMapping("/chart")
-    public ResponseEntity insertLog(@RequestBody MovementLogDTO movementLogDTO) {
-        return new ResponseEntity(myService.insertLog(movementLogDTO), HttpStatus.OK);
-    }
-
     @GetMapping("/profile/{userId}")
     public ResponseEntity<UserDTO> getProfile(@PathVariable Long userId) {
         return new ResponseEntity<>(myService.getProfile(userId), HttpStatus.OK);
