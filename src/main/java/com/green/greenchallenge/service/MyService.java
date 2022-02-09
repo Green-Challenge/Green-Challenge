@@ -32,7 +32,6 @@ public class MyService {
     private final TreeRepository treeRepository;
     private final MovementLogRepository movementLogRepository;
     private final DonationLogRepository donationLogRepository;
-    private final ChallengeRepository challengeRepository;
 
     @Transactional
     public UserDTO createProfile(UserDTO userDTO) {
@@ -114,7 +113,6 @@ public class MyService {
 
         for (Participant participant : participantList) {
             int numberOfCompletions = 0;
-            int instanceNumberOfLeaf = 0;
             List<TreeInstance> treeInstanceList = treeInstanceRepository.findByChallengeId(participant.getChallengeId());
 
             for (TreeInstance treeInstance : treeInstanceList) {
@@ -124,22 +122,11 @@ public class MyService {
                         numberOfCompletions++; // 증가시킨다.
                     }
                 }
-                instanceNumberOfLeaf = treeInstance.getNumberOfLeaf();
             }
 
             if (!treeRepository.findByChallengeId(participant.getChallengeId()).isEmpty()) {
-                int treeGrowth = 1;
-                int challengeGoalLeaves = challengeRepository.findById(participant.getChallengeId().getChallengeId()).get().getGoalLeaves();
 
-                if (instanceNumberOfLeaf < challengeGoalLeaves / 3) {
-                    treeGrowth = 1;
-                } else if (instanceNumberOfLeaf < challengeGoalLeaves * 2 / 3) {
-                    treeGrowth = 2;
-                } else {
-                    treeGrowth = 3;
-                }
-
-                Long treeId = treeRepository.findByChallengeIdAndTreeGrowth(participant.getChallengeId(), treeGrowth).getTreeId();
+                Long treeId = treeRepository.findByChallengeIdAndTreeGrowth(participant.getChallengeId(), 3).getTreeId();
 
                 GetTreeTogetherDTO togetherDTO = new GetTreeTogetherDTO(
                         participant.getChallengeId().getChallengeId(),
