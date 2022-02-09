@@ -18,5 +18,5 @@ public interface MovementLogRepository extends JpaRepository<MovementLog, Long> 
 
     List<Optional<MovementLog>> findByUserAndDayGreaterThanEqualAndDayLessThanEqual(User userId, LocalDate start, LocalDate end);
 
-    List<Optional<MovementLog>> findByDayGreaterThanAndDayLessThanEqualAndTransportationAndUser(LocalDate start, LocalDate end, String transportation, User user);
+    List<Optional<MovementLog>> findByDayGreaterThanEqualAndDayLessThanEqualAndTransportationAndUser(LocalDate start, LocalDate end, String transportation, User user);
 }
