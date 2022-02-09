@@ -38,7 +38,7 @@ public class ChallengeService {
 
         List<Tree> treeList = treeRepository.findByChallengeId(challenge);
         HashMap<Long, Integer> sameTree = new HashMap<>();
-        for(Tree tree : treeList){
+        for (Tree tree : treeList) {
             sameTree.put(tree.getTreeId(),tree.getTreeGrowth());
         }
         Long maxTreeId = Collections.max(sameTree.entrySet(), Map.Entry.comparingByValue()).getKey();
@@ -298,7 +298,7 @@ public class ChallengeService {
         return challengeTreeGrowthDTO;
     }
     @Transactional
-    public List<ChallengeChartResponseDTO> getChallengeChart(ChallengeChartRequestDTO challengeChartRequestDTO){
+    public GetChartResponseDTO getChallengeChart(ChallengeChartRequestDTO challengeChartRequestDTO){
         User user = userRepository.findById(challengeChartRequestDTO.getUserId()).orElseThrow();
         Challenge challenge = challengeRepository.findById(challengeChartRequestDTO.getChallengeId()).orElseThrow();
         String trans = challenge.getTransportation();
@@ -311,20 +311,17 @@ public class ChallengeService {
         List<MovementLog> lastMonth = movementLogRepository.findByDayGreaterThanEqualAndDayLessThanEqualAndTransportationAndUser(start.minusMonths(1), start.minusDays(1), trans, user)
                 .stream().map(Optional::orElseThrow).collect(Collectors.toList());
 
-        List<ChallengeChartResponseDTO> list = new ArrayList<>();
+        List<MovementLogDTO> nowMonthDTO = nowMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
+        List<MovementLogDTO> lastMonthDTO = lastMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
 
-        Transportation transportation = Transportation.valueOf(trans);
-
-        list.add(ChallengeChartResponseDTO.builder()
-                .date(start.minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM")))
-                .value(lastMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
-                .build());
-        list.add(ChallengeChartResponseDTO.builder()
-                .date(start.format(DateTimeFormatter.ofPattern("yyyy-MM")))
-                .value(nowMonth.stream().mapToDouble(MovementLog::getDistance).sum() * transportation.getCost())
-                .build());
-
-        return list;
+        return GetChartResponseDTO.builder()
+                .currentMonth(nowMonthDTO)
+                .lastMonth(lastMonthDTO)
+                .build();
     }
 
 
