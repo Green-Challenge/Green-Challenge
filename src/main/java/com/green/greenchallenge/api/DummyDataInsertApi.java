@@ -23,7 +23,7 @@ public class DummyDataInsertApi {
         long duration = ChronoUnit.DAYS.between(LocalDate.of(dummyAddRecordDTO.getYear(), dummyAddRecordDTO.getMonth(), dummyAddRecordDTO.getDay()), LocalDate.now());
         for (int i = 0; i < duration; i++) {
 
-            double rand = Math.round((Math.random() * dummyAddRecordDTO.getDefaultDistance() + dummyAddRecordDTO.getRange()) * 1000.0) / 1000.0;
+            double rand = Math.round((Math.random() * dummyAddRecordDTO.getRange() + dummyAddRecordDTO.getDefaultDistance()) * 1000.0) / 1000.0;
 
             dummyChallengeService.addRecord(AddRecordDTO.builder()
                     .userId(dummyAddRecordDTO.getUserId())
