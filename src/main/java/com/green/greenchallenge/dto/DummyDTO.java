@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DummyAddRecordDTO {
+public class DummyDTO {
+    // add record
     private Long challengeId;
     private Long userId;
     private double achieved;
@@ -20,4 +21,11 @@ public class DummyAddRecordDTO {
     private int day;
     private int range;
     private int defaultDistance;
+
+    // sign in
+    private int howMany;
+
+    // participant
+    private int userIdRangeStart;
+    private int userIdRangeEnd;
 }
