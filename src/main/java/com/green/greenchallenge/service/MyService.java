@@ -1,6 +1,7 @@
 package com.green.greenchallenge.service;
 
 import com.green.greenchallenge.domain.*;
+import com.green.greenchallenge.dto.GetChartResponseDTO;
 import com.green.greenchallenge.dto.GetTreeTogetherDTO;
 import com.green.greenchallenge.domain.MovementLog;
 import com.green.greenchallenge.domain.User;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +32,6 @@ public class MyService {
     private final TreeRepository treeRepository;
     private final MovementLogRepository movementLogRepository;
     private final DonationLogRepository donationLogRepository;
-    private final ChallengeRepository challengeRepository;
 
     @Transactional
     public UserDTO createProfile(UserDTO userDTO) {
@@ -54,25 +55,31 @@ public class MyService {
     }
 
     @Transactional
-    public List<MovementLogDTO> getChart(Long userId) {
-        List<MovementLog> logList = movementLogRepository.findByUserId(userId).stream()
-                .map(Optional::orElseThrow).collect(Collectors.toList());
+    public GetChartResponseDTO getChart(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+        if (findUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        if(logList.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        LocalDate start = LocalDate.now().withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
 
-        return logList.stream().map(MovementLogDTO::toDTO).collect(Collectors.toList());
-    }
+        List<MovementLog> nowMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start, end).stream()
+                .map(Optional::orElseThrow)
+                .collect(Collectors.toList());
+        List<MovementLog> lastMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start.minusMonths(1), start.minusDays(1)).stream()
+                .map(Optional::orElseThrow)
+                .collect(Collectors.toList());
 
-    @Transactional
-    public MovementLogDTO insertLog(MovementLogDTO movementLogDTO) {
-        User findUser = userRepository.findById(movementLogDTO.getUserId()).orElseThrow();
+        List<MovementLogDTO> nowMonthDTO = nowMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
+        List<MovementLogDTO> lastMonthDTO = lastMonth.stream()
+                .map(MovementLogDTO::toDTO)
+                .collect(Collectors.toList());
 
-        MovementLog move = movementLogDTO.toEntity();
-        move.setUser(findUser);
-
-        movementLogRepository.save(move);
-
-        return MovementLogDTO.toDTO(move);
+        return GetChartResponseDTO.builder()
+                .currentMonth(nowMonthDTO)
+                .lastMonth(lastMonthDTO)
+                .build();
     }
 
     @Transactional
@@ -84,6 +91,7 @@ public class MyService {
         return UserDTO.builder()
                 .sggNm(findUser.get().getProfileImg())
                 .nickName(findUser.get().getNickName())
+                .profileImg(findUser.get().getProfileImg())
                 .siNm(findUser.get().getSiNm())
                 .sggNm(findUser.get().getSggNm())
                 .token(findUser.get().getToken())
@@ -95,14 +103,16 @@ public class MyService {
         List<Participant> participantList = participantRepository.findByUserId(User.builder().userId(userId).build());
         ArrayList<GetTreeTogetherDTO> getTreeTogethers = new ArrayList<>();
 
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         if (participantList.isEmpty()) {
             throw new CustomException(ErrorCode.PARTICIPANT_EMPTY);
         }
 
         for (Participant participant : participantList) {
             int numberOfCompletions = 0;
-            int instanceNumberOfLeaf = 0;
-            boolean isFinished = false;
             List<TreeInstance> treeInstanceList = treeInstanceRepository.findByChallengeId(participant.getChallengeId());
 
             for (TreeInstance treeInstance : treeInstanceList) {
@@ -112,22 +122,11 @@ public class MyService {
                         numberOfCompletions++; // 증가시킨다.
                     }
                 }
-                instanceNumberOfLeaf = treeInstance.getNumberOfLeaf();
             }
 
             if (!treeRepository.findByChallengeId(participant.getChallengeId()).isEmpty()) {
-                int treeGrowth = 1;
-                int challengeGoalLeaves = challengeRepository.findById(participant.getChallengeId().getChallengeId()).get().getGoalLeaves();
 
-                if (instanceNumberOfLeaf < challengeGoalLeaves / 3) {
-                    treeGrowth = 1;
-                } else if (instanceNumberOfLeaf < challengeGoalLeaves * 2 / 3) {
-                    treeGrowth = 2;
-                } else {
-                    treeGrowth = 3;
-                }
-
-                Long treeId = treeRepository.findByChallengeIdAndTreeGrowth(participant.getChallengeId(), treeGrowth).getTreeId();
+                Long treeId = treeRepository.findByChallengeIdAndTreeGrowth(participant.getChallengeId(), 3).getTreeId();
 
                 GetTreeTogetherDTO togetherDTO = new GetTreeTogetherDTO(
                         participant.getChallengeId().getChallengeId(),

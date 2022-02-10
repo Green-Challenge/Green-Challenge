@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class ChallengeResponseDTO {
     private int numberOfChallengers;
     private int rewardToken;
     private String description;
-    private String hashTag;
+    private List<String> hashTag;
     private Long treeId;
     private String challengeImg;
 

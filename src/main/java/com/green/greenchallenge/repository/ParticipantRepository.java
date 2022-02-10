@@ -14,5 +14,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     List<Participant> findByUserId(User user);
     int countByChallengeId(Challenge challenge);
     Participant findByUserIdAndChallengeId(User userId, Challenge challengeId);
+    List<Participant> findByUserIdOrderByParticipantIdDesc(User user);
+    Participant findByUserIdAndChallengeIdOrderByParticipantIdDesc(User userId, Challenge challengeId);
 
 }
