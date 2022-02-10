@@ -111,7 +111,7 @@ public class ChallengeService {
                     if(treeInstanceList.size() > 0){
                         System.out.println(treeInstanceList.size());
                         challengeListResponseDTO.setPercent(
-                                (participantRepository.findByUserIdAndChallengeIdOrderByParticipantIdDesc(user, challenge).getTotalDistance() % challenge.getGoalDistance())/challenge.getGoalDistance()
+                                Math.round(((participantRepository.findByUserIdAndChallengeIdOrderByParticipantIdDesc(user, challenge).getTotalDistance() % challenge.getGoalDistance())/challenge.getGoalDistance())*10000)/100.0
                         );
                     } else {
                         challengeListResponseDTO.setPercent(Double.valueOf(0));
@@ -278,7 +278,7 @@ public class ChallengeService {
         if(getParticipant.getLeafCount() == userDonatedLeaf.intValue()
                 && getParticipant.getLeafCount() == userGotLeaf.intValue()){
             ChallengeDetailResponseDTO challengeDetailResponseDTO = ChallengeDetailResponseDTO.builder()
-                    .current(getParticipant.getTotalDistance()/challenge.getGoalDistance())
+                    .current(((Math.round((getParticipant.getTotalDistance()/challenge.getGoalDistance())*1000))/1000.0))
                     .goalDistance(challenge.getGoalDistance())
                     .leafCount(userDonatedLeaf.intValue())
                     .build();

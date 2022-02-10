@@ -32,7 +32,7 @@ public class MovementLogDTO {
     public static MovementLogDTO toDTO(MovementLog movementLog) {
         return MovementLogDTO.builder()
                 .logdate(movementLog.getDay().toString())
-                .distance(movementLog.getDistance() * Transportation.valueOf(movementLog.getTransportation()).getCost())
+                .distance(Math.round(movementLog.getDistance() * Transportation.valueOf(movementLog.getTransportation()).getCost() * 10) / 10.0)
                 .build();
     }
 
