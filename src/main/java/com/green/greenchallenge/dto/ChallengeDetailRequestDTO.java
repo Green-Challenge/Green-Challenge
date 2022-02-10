@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class ChallengeDetailRequestDTO {
 
-    private int challengeId;
-    private int userId;
+    private Long challengeId;
+    private Long userId;
 
 }

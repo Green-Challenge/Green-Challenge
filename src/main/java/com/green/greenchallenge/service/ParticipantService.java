@@ -35,9 +35,12 @@ public class ParticipantService {
     public void createParticipant(ChallengeJoinRequestDTO challengeJoinRequestDTO){
 
         Optional<User> getUser = userRepository.findById(challengeJoinRequestDTO.getUserId());
+        System.out.println(getUser);
+        if(getUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
         User user = getUser.get();
 
         Optional<Challenge> getChallenge = challengeRepository.findById(challengeJoinRequestDTO.getChallengeId());
+        if(getChallenge.isEmpty()) throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
         Challenge challenge = getChallenge.get();
 
         Participant checkedParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
