@@ -1,6 +1,7 @@
 package com.green.greenchallenge.api;
 
 import com.green.greenchallenge.dto.AddRecordDTO;
+import com.green.greenchallenge.dto.DummyAddRecordDTO;
 import com.green.greenchallenge.service.DummyChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,16 +19,16 @@ public class DummyDataInsertApi {
     private final DummyChallengeService dummyChallengeService;
 
     @PostMapping("/challenging/done")
-    public void dummyAddRecord(@RequestBody AddRecordDTO addRecordDTO) {
-        long duration = ChronoUnit.DAYS.between(LocalDate.of(2022, 1, 1), LocalDate.now());
+    public void dummyAddRecord(@RequestBody DummyAddRecordDTO dummyAddRecordDTO) {
+        long duration = ChronoUnit.DAYS.between(LocalDate.of(dummyAddRecordDTO.getYear(), dummyAddRecordDTO.getMonth(), dummyAddRecordDTO.getDay()), LocalDate.now());
         for (int i = 0; i < duration; i++) {
 
-            double rand = Math.round((Math.random() * 5 + 1) * 1000.0) / 1000.0;
+            double rand = Math.round((Math.random() * dummyAddRecordDTO.getDefaultDistance() + dummyAddRecordDTO.getRange()) * 1000.0) / 1000.0;
 
             dummyChallengeService.addRecord(AddRecordDTO.builder()
-                    .userId(addRecordDTO.getUserId())
-                    .challengeId(addRecordDTO.getChallengeId())
-                    .achieved(rand).build(), LocalDate.of(2022, 1, 1).plusDays(i));
+                    .userId(dummyAddRecordDTO.getUserId())
+                    .challengeId(dummyAddRecordDTO.getChallengeId())
+                    .achieved(rand).build(), LocalDate.of(dummyAddRecordDTO.getYear(), dummyAddRecordDTO.getMonth(), dummyAddRecordDTO.getDay()).plusDays(i));
         }
     }
 }
