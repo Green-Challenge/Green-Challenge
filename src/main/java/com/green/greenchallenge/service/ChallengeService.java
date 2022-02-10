@@ -42,14 +42,18 @@ public class ChallengeService {
             sameTree.put(tree.getTreeId(),tree.getTreeGrowth());
         }
         Long maxTreeId = Collections.max(sameTree.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println(maxTreeId);
+        List<String> hashTagList = new ArrayList<>();
+        String[] hasTagArray = challenge.getHashTag().split(",");
+        for(String hasTag : hasTagArray){
+            hashTagList.add(hasTag);
+        }
 
         return ChallengeResponseDTO.builder()
                 .challengeName(challenge.getChallengeName())
                 .numberOfChallengers(participantRepository.countByChallengeId(challenge))
                 .rewardToken(challenge.getRewardToken())
                 .description(challenge.getDescription())
-                .hashTag(challenge.getHashTag())
+                .hashTag(hashTagList)
                 .treeId(maxTreeId)
                 .challengeImg(challenge.getChallengeImg())
                 .build();
@@ -60,19 +64,38 @@ public class ChallengeService {
 
         Optional<User> getUser = userRepository.findById(userId);
         User user = getUser.get();
-        HashMap<LocalDate, ChallengeListResponseDTO> sortChallengeResponseDTO = new HashMap<>();
-        HashMap<Long, ChallengeListResponseDTO> unParticipateChallengeResponseDTO = new HashMap<>();
+        List<Challenge> allChallengeList = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "challengeId"));
 
-        List<Challenge> challengeList = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "challengeId"));
-        List<ChallengeListResponseDTO> userChallengeList = new ArrayList<>();
+        List<Participant> userParticipantList = participantRepository.findByUserIdOrderByParticipantIdDesc(user);
+        List<Challenge> sortedChallengeList = new ArrayList<>();
+        for(Participant userParticipant : userParticipantList){
+            if(allChallengeList.contains(challengeRepository.findById(userParticipant.getChallengeId().getChallengeId()).get())){
+                allChallengeList.remove(challengeRepository.findById(userParticipant.getChallengeId().getChallengeId()).get());
+                sortedChallengeList.add((challengeRepository.findById(userParticipant.getChallengeId().getChallengeId()).get()));
+            }
+        }
+        for(Challenge challenge : allChallengeList){
+            sortedChallengeList.add(challenge);
+        }
 
-        for(Challenge challenge : challengeList){
+        List<ChallengeListResponseDTO> sortedChallengeResponseDTO = new ArrayList<>();
+
+        for(Challenge challenge : sortedChallengeList){
+            Long getTreeId;
+            Optional<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeIdAndFinishedDateIsNull(challenge);
+            if(treeInstance.isEmpty() || treeInstance.get().getNumberOfLeaf() < 30){
+                getTreeId = treeRepository.findByChallengeIdAndTreeGrowth(challenge, 1).getTreeId();
+            } else if(treeInstance.get().getNumberOfLeaf() < 60){
+                getTreeId = treeRepository.findByChallengeIdAndTreeGrowth(challenge, 2).getTreeId();
+            } else {
+                getTreeId = treeRepository.findByChallengeIdAndTreeGrowth(challenge, 3).getTreeId();
+            }
             if(challenge.getFinishDate().isAfter(LocalDate.now())){
                 ChallengeListResponseDTO challengeListResponseDTO =
                         ChallengeListResponseDTO.builder()
                                 .challengeId(challenge.getChallengeId())
                                 .challengeName(challenge.getChallengeName())
-                                .treeId(getChallenge(challenge.getChallengeId()).getTreeId())
+                                .treeId(getTreeId)
                                 .percent(0.0)
                                 .rewordToken(challenge.getRewardToken())
                                 .numberOfChallengers(participantRepository.countByChallengeId(challenge))
@@ -80,35 +103,27 @@ public class ChallengeService {
                                 .isParticipating(false)
                                 .build();
 
-                Participant challengeParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
+                Participant challengeParticipant = participantRepository.findByUserIdAndChallengeIdOrderByParticipantIdDesc(user, challenge);
+                List<TreeInstance> treeInstanceList = treeInstanceRepository.findByChallengeId(challenge);
                 if( challengeParticipant != null ){
                     challengeListResponseDTO.setParticipating(true);
-                    List<TreeInstance> treeInstance = treeInstanceRepository.findByChallengeId(challenge);
-                    if(treeInstance != null){
+
+                    if(treeInstanceList.size() > 0){
+                        System.out.println(treeInstanceList.size());
                         challengeListResponseDTO.setPercent(
-                                Double.valueOf(treeInstance.get(treeInstance.size()-1).getNumberOfLeaf()));
+                                (participantRepository.findByUserIdAndChallengeIdOrderByParticipantIdDesc(user, challenge).getTotalDistance() % challenge.getGoalDistance())/challenge.getGoalDistance()
+                        );
+                    } else {
+                        challengeListResponseDTO.setPercent(Double.valueOf(0));
                     }
-                    sortChallengeResponseDTO.put(challengeParticipant.getParticipateDate(), challengeListResponseDTO);
+                    sortedChallengeResponseDTO.add(challengeListResponseDTO);
                 } else {
-                    unParticipateChallengeResponseDTO.put(challenge.getChallengeId(), challengeListResponseDTO);
+                    sortedChallengeResponseDTO.add(challengeListResponseDTO);
                 }
             }
         }
 
-        List<LocalDate> participateDatekeyList = new ArrayList<>(sortChallengeResponseDTO.keySet());
-        Collections.sort(participateDatekeyList, Collections.reverseOrder());
-        List<Long> unParticipateDatekeyList = new ArrayList(unParticipateChallengeResponseDTO.keySet());
-        unParticipateDatekeyList.sort(Long::compareTo);
-
-        for (LocalDate localdate : participateDatekeyList){
-            userChallengeList.add(sortChallengeResponseDTO.get(localdate));
-        }
-
-        for (Long challengeId : unParticipateDatekeyList){
-            userChallengeList.add(unParticipateChallengeResponseDTO.get(challengeId));
-        }
-
-        return userChallengeList;
+        return sortedChallengeResponseDTO;
     }
 
     @Transactional
@@ -137,7 +152,7 @@ public class ChallengeService {
         }
 
         ChallengeShortResponseDTO challengeShortDTO = ChallengeShortResponseDTO.builder()
-                .dayOfChallenge(Math.toIntExact(days))
+                .dayOfChallenge(Math.toIntExact(days+1))
                 .amountOfTree(userPlantedTree)
                 .build();
 
@@ -243,22 +258,28 @@ public class ChallengeService {
     @Transactional
     public ChallengeDetailResponseDTO getChallengeDetail(ChallengeDetailRequestDTO challengeDetailRequestDTO){
 
-        User getUser = userRepository.findById(Long.valueOf(challengeDetailRequestDTO.getUserId())).get();
-        Challenge getChallenge = challengeRepository.findById(Long.valueOf(challengeDetailRequestDTO.getChallengeId())).get();
+        Optional<User> getUser = userRepository.findById(challengeDetailRequestDTO.getUserId());
+        if(getUser.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        User user = getUser.get();
 
-        Participant getParticipant = participantRepository.findByUserIdAndChallengeId(getUser, getChallenge);
+        Optional<Challenge> getChallenge = challengeRepository.findById(challengeDetailRequestDTO.getChallengeId());
+        if(getChallenge.isEmpty()) throw new CustomException(ErrorCode.CHALLENGE_NOT_FOUND);
+        Challenge challenge = getChallenge.get();
+        Participant getParticipant = participantRepository.findByUserIdAndChallengeId(user, challenge);
+        System.out.println(getParticipant);
+        if(getParticipant == null) throw new CustomException(ErrorCode.PARTICIPANT_EMPTY);
 
         List<DonationLog> userDonationList = donationLogRepository.findByParticipantId(getParticipant);
         Double userGotLeaf =0.0;
         Double userDonatedLeaf =0.0;
-        userGotLeaf = getParticipant.getTotalDistance() / getChallenge.getGoalDistance();
+        userGotLeaf = getParticipant.getTotalDistance() / challenge.getGoalDistance();
         userDonatedLeaf = Double.valueOf(userDonationList.size());
 
         if(getParticipant.getLeafCount() == userDonatedLeaf.intValue()
                 && getParticipant.getLeafCount() == userGotLeaf.intValue()){
             ChallengeDetailResponseDTO challengeDetailResponseDTO = ChallengeDetailResponseDTO.builder()
-                    .current(getParticipant.getTotalDistance()/getChallenge.getGoalDistance())
-                    .goalDistance(getChallenge.getGoalDistance())
+                    .current(getParticipant.getTotalDistance()/challenge.getGoalDistance())
+                    .goalDistance(challenge.getGoalDistance())
                     .leafCount(userDonatedLeaf.intValue())
                     .build();
             return challengeDetailResponseDTO;
