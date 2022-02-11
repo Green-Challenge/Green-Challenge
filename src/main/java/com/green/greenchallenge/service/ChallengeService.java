@@ -278,7 +278,7 @@ public class ChallengeService {
         if(getParticipant.getLeafCount() == userDonatedLeaf.intValue()
                 && getParticipant.getLeafCount() == userGotLeaf.intValue()){
             ChallengeDetailResponseDTO challengeDetailResponseDTO = ChallengeDetailResponseDTO.builder()
-                    .current(((Math.round((getParticipant.getTotalDistance()/challenge.getGoalDistance())*1000))/1000.0))
+                    .current(((Math.round((getParticipant.getTotalDistance()%challenge.getGoalDistance())*1000))/1000.0))
                     .goalDistance(challenge.getGoalDistance())
                     .leafCount(userDonatedLeaf.intValue())
                     .build();
@@ -344,7 +344,6 @@ public class ChallengeService {
                 .lastMonth(lastMonthDTO)
                 .build();
     }
-
 
     @Transactional
     public TodayRecordDTO getTodayRecord(TodayRecordDTO todayRecordDTO) {
