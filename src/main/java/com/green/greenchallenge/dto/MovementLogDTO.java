@@ -6,6 +6,7 @@ import com.green.greenchallenge.domain.User;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Builder
@@ -19,6 +20,8 @@ public class MovementLogDTO {
     private String logdate;
     private Double distance;
     private String transportation;
+    private String x;
+    private Double y;
 
     public MovementLog toEntity() {
         return MovementLog.builder()
@@ -30,9 +33,10 @@ public class MovementLogDTO {
     }
 
     public static MovementLogDTO toDTO(MovementLog movementLog) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd");
         return MovementLogDTO.builder()
-                .logdate(movementLog.getDay().toString())
-                .distance(Math.round(movementLog.getDistance() * Transportation.valueOf(movementLog.getTransportation()).getCost() * 10) / 10.0)
+                .x(movementLog.getDay().format(formatter))
+                .y(Math.round(movementLog.getDistance() * Transportation.valueOf(movementLog.getTransportation()).getCost() * 10) / 10.0)
                 .build();
     }
 
