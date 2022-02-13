@@ -18,7 +18,10 @@ public class GreenChallengeApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://15.164.98.50");
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins("http://15.164.98.50")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "OPTIONS");
             }
         };
     }
