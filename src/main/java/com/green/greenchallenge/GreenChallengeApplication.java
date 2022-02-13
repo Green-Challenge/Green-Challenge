@@ -13,16 +13,16 @@ public class GreenChallengeApplication {
         SpringApplication.run(GreenChallengeApplication.class, args);
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://15.164.98.50")
-                        .allowedMethods("GET", "POST", "PUT", "PATCH", "OPTIONS")
-                        .allowCredentials(true);
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("http://15.164.98.50")
+//                        .allowedMethods("GET", "POST", "PUT", "PATCH", "OPTIONS")
+//                        .allowCredentials(true);
+//            }
+//        };
+//    }
 }
