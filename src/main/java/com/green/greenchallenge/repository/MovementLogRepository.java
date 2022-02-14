@@ -22,4 +22,7 @@ public interface MovementLogRepository extends JpaRepository<MovementLog, Long> 
     List<Optional<MovementLog>> findByUserAndDayGreaterThanEqualAndDayLessThanEqual(User user, LocalDate start, LocalDate end);
 
     List<Optional<MovementLog>> findByDayGreaterThanEqualAndDayLessThanEqualAndTransportationAndUser(LocalDate start, LocalDate end, String transportation, User user);
+
+    @Query(value = "select movement_log_id, user_id, sum(distance) as distance, transportation, day from movement_log where user_id = :userId and day >= :start and day <= :end and transportation = :transportation group by day", nativeQuery = true)
+    List<Optional<MovementLog>> findByDayGreaterThanEqualAndDayLessThanEqualAndTransportationAndUserId(LocalDate start, LocalDate end, String transportation, Long userId);
 }
