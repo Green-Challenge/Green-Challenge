@@ -62,10 +62,10 @@ public class MyService {
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now();
 
-        List<MovementLog> nowMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start, end).stream()
+        List<MovementLog> nowMonth = movementLogRepository.findByUserIdAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get().getUserId(), start, end).stream()
                 .map(Optional::orElseThrow)
                 .collect(Collectors.toList());
-        List<MovementLog> lastMonth = movementLogRepository.findByUserAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get(), start.minusMonths(1), start.minusDays(1)).stream()
+        List<MovementLog> lastMonth = movementLogRepository.findByUserIdAndDayGreaterThanEqualAndDayLessThanEqual(findUser.get().getUserId(), start.minusMonths(1), start.minusDays(1)).stream()
                 .map(Optional::orElseThrow)
                 .collect(Collectors.toList());
 
