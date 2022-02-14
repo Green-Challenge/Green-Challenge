@@ -21,9 +21,9 @@ public class GreenChallengeApplication {
                 registry.addMapping("/**")
                         .allowedOrigins("http://15.164.98.50")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "OPTIONS")
-                        .allowedHeaders("X-AUTH-TOKEN")
+                        .allowedHeaders("Content-Type", "X-AUTH-TOKEN", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+                        .exposedHeaders("X-AUTH-TOKEN", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                         .allowCredentials(true);
-
             }
         };
     }
