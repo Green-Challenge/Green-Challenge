@@ -1,9 +1,9 @@
-Green-Challenge!
+Green-Challenge
 =============
 친환경 알고리즘 및 챌린지 프로젝트 입니다.<br>
 
 ## 프로젝트의 전체적인 구조
-![Green-Challenge 서버 구조도](대충 이미지 경로)
+![Green-Challenge 서버 구조도](https://user-images.githubusercontent.com/32195300/149613847-ec2c1de0-f1bc-4bce-96c8-fe523a627ca9.png)
 - github action을 이용하여 CI/CD를 진행합니다.
 - 서버는 AWS EC2를 사용하고 있습니다.<br>
 - 빌드된 파일을 S3에 업로드합니다.
@@ -42,11 +42,12 @@ Git Flow를 사용하여 브랜치를 관리합니다.<br>
 - 협업하는 동료의 소스코드에 서로 테스트코드를 작성하여 서로의 소스코드를 알 수 있도록 하고 있습니다.
   <br><br>
 
-### 성능 테스트
-
 ## 사용 기술 및 환경
 Spring boot, Maven, JPA, AWS, MariaDB, Github action, S3, CodeDeploy, Java11, Nginx
 <br>
+
+## Wiki
+팀 회의록 노션 : https://www.notion.so/9ebdfa1a50da42d0bd211bfd6b640dee?v=1584de5c46384d959dda24517a3a2f76
 
 ## CI
 Github action을 사용합니다.<br>
@@ -55,10 +56,13 @@ develop 브랜치에 push 및 PR시 마다 자동 Build 및 Test를 적용합니
 ## CD
 AWS S3, CodeDeploy를 이용하여 ec2 서버에 자동 배포합니다.<br>
 
-##Database
+## Database
 - MariaDB<br><br>
 
 ## 화면 설계
+피그마 링크 : 
 
 
 ## 프로젝트 DB ERD
+![Green-Challenge ERD](https://user-images.githubusercontent.com/32195300/151150435-65074f7a-809e-4527-bb62-f1f6c2ae2c18.png)
+
