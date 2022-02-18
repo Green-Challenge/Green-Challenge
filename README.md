@@ -7,8 +7,9 @@ Green-Challenge
 - github action을 이용하여 CI/CD를 진행합니다.
 - 서버는 AWS EC2를 사용하고 있습니다.<br>
 - 빌드된 파일을 S3에 업로드합니다.
-- 업로드된 .jar파일을 codeDeploy가 ec2 서버에 자동 업로드합니다.
-- 구동중인 서버 : Nginx, MariaDB Server
+- 업로드된 .jar파일을 CodeDeploy가 ec2 서버에 자동 업로드합니다.
+- 구동중인 서버 : AWS EC2, MariaDB Server
+- 프록시 : Nginx
 - public IP는 Main Server인 ec2에만 할당되어 있습니다.
 
 
@@ -43,7 +44,7 @@ Git Flow를 사용하여 브랜치를 관리합니다.<br>
   <br><br>
 
 ## 사용 기술 및 환경
-Spring boot, Maven, JPA, AWS, MariaDB, Github action, S3, CodeDeploy, Java11, Nginx
+Spring boot, Maven, JPA, AWS, MariaDB, Github Actions, S3, CodeDeploy, Java11, Nginx
 <br>
 
 ## Wiki
